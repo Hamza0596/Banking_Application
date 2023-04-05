@@ -17,11 +17,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class BankAccountDto {
+public class BankAccountDto  {
     private String id;
     private double balnce;
     private Date createdAt;
     private AccountStatus status;
     private Customer customer;
-    private List<AccountOperations> operations;
 }

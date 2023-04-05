@@ -34,9 +34,9 @@ public class BankAccountServiceImpl implements BankAccountService {
         log.info("hello"+customerId);
 
         Customer customer = customerRepository.findById(customerId).orElseThrow(()->new UserNotFoundException("user not found"));
-
+        System.out.println(balance+type);
         BankAccount bankAccount = new BankAccount();
-        if(type=="CURR"){
+        if(type.equals("CURR")){
             CurrentAccount currentAccount = new CurrentAccount();
             currentAccount.setId(UUID.randomUUID().toString());
             currentAccount.setCreatedAt(new Date());
@@ -45,7 +45,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             currentAccount.setBalnce(balance);
             currentAccount.setCustomer(customer);
             bankAccount=currentAccount;
-        } if (type=="SAVE") {
+        } if (type.equals("SAVE")) {
             SavingAccount savingAccount = new SavingAccount();
             savingAccount.setId(UUID.randomUUID().toString());
             savingAccount.setCreatedAt(new Date());
@@ -53,17 +53,16 @@ public class BankAccountServiceImpl implements BankAccountService {
             savingAccount.setStatus(AccountStatus.CREATED);
             savingAccount.setBalnce(balance);
             savingAccount.setCustomer(customer);
-            bankAccount= savingAccount;
+            bankAccount=savingAccount;
         }
-        return bankingMapper.fromBankAcount(bankAccountRepository.save(bankAccount)) ;
+
+        return bankingMapper.fromBankAccount(bankAccountRepository.save(bankAccount)) ;
     }
 
     @Override
-    public List<BankAccountDto> getBankAccountsByUserId(Long id) throws UserNotFoundException {
-            List<BankAccount> bankAccounts=bankAccountRepository.findByCustomerId(id);
-            if(bankAccounts.isEmpty()){
-                throw new UserNotFoundException("waaaaaaaaaaaaaa");
-            }
+    public List<BankAccountDto> getBankAccountsByUserId(Long id)   {
+        List<BankAccount> bankAccounts=bankAccountRepository.findByCustomerId(id);
+
         return  bankingMapper.fromBankAccountListToBankAccountDto(bankAccounts) ;
     }
 
@@ -75,7 +74,16 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public BankAccountDto getBankAccount(String bankId) throws BankAccountNotFoundException {
-        return  bankingMapper.fromBankAcount(bankAccountRepository.findById(bankId).orElseThrow(()->new BankAccountNotFoundException("No account was found with this number")));
+        BankAccount bankAccount=bankAccountRepository.findById(bankId).orElseThrow(()->new BankAccountNotFoundException("No account was found with this number"));
+
+        if(bankAccount instanceof CurrentAccount){
+            return bankingMapper.fromBankAccount((CurrentAccount) bankAccount);
+
+        }else {
+            return bankingMapper.fromBankAccount((SavingAccount) bankAccount);
+
+        }
+
     }
 
     @Override

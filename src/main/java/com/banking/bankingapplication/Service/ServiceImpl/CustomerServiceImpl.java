@@ -21,9 +21,9 @@ public class CustomerServiceImpl  implements CustomerService {
     @Autowired
     BankingMapper bankingMapper;
     @Override
-    public CustomerDto createCustomer(Customer customer) {
-
-        return bankingMapper.fromCustomer(customerRepository.save(customer));
+    public CustomerDto createCustomer(CustomerDto customerDto) {
+       Customer cus=bankingMapper.fromCustomerDto(customerDto);
+        return bankingMapper.fromCustomer(customerRepository.save(cus));
     }
 
     @Override

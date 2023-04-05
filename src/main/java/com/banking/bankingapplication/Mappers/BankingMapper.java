@@ -1,9 +1,13 @@
 package com.banking.bankingapplication.Mappers;
 
 import com.banking.bankingapplication.Dtos.BankAccountDto;
+import com.banking.bankingapplication.Dtos.CurrentAcountDto;
 import com.banking.bankingapplication.Dtos.CustomerDto;
+import com.banking.bankingapplication.Dtos.SavingAccountDto;
 import com.banking.bankingapplication.Entities.BankAccount;
+import com.banking.bankingapplication.Entities.CurrentAccount;
 import com.banking.bankingapplication.Entities.Customer;
+import com.banking.bankingapplication.Entities.SavingAccount;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -51,17 +55,9 @@ public class BankingMapper {
         return customers;
     }
 
-    public BankAccountDto fromBankAcount(BankAccount bankAccount){
-        BankAccountDto bankAccountDto=new BankAccountDto();
-        BeanUtils.copyProperties(bankAccount,bankAccountDto);
-        return bankAccountDto;
-    }
 
-    public BankAccount fromBankAcountDto(BankAccountDto bankAccountDto){
-        BankAccount bankAccount=new BankAccount();
-        BeanUtils.copyProperties(bankAccountDto,bankAccount);
-        return bankAccount;
-    }
+
+
 
 
     public List<BankAccountDto>  fromBankAccountListToBankAccountDto(List<BankAccount> bankAccouts){
@@ -72,12 +68,39 @@ public class BankingMapper {
             bankAccountDto.setStatus(bankAcount.getStatus());
             bankAccountDto.setCustomer(bankAcount.getCustomer());
             bankAccountDto.setCreatedAt(bankAcount.getCreatedAt());
-            bankAccountDto.setOperations(bankAcount.getOperations());
 
             return bankAccountDto;
         }).collect(Collectors.toList());
         return bankAccountDtos;
     }
+
+
+
+    public BankAccountDto fromBankAccount(BankAccount bankAccount){
+
+        if(bankAccount instanceof CurrentAccount){
+            CurrentAcountDto currentAcountDto=new CurrentAcountDto();
+            BeanUtils.copyProperties((CurrentAccount) bankAccount,currentAcountDto);
+            System.out.println(currentAcountDto);
+
+            return currentAcountDto;
+        }else {
+            SavingAccountDto savingAccountDto=new SavingAccountDto();
+            BeanUtils.copyProperties((SavingAccount)bankAccount,savingAccountDto);
+            System.out.println(savingAccountDto);
+
+            return savingAccountDto;
+        }
+
+    }
+
+    public BankAccount fromBankAcountDto(BankAccountDto bankAccountDto){
+        BankAccount bankAccount=new BankAccount();
+        BeanUtils.copyProperties(bankAccountDto,bankAccount);
+        return bankAccount;
+    }
+
+
 
 
 }
