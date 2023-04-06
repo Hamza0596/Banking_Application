@@ -4,6 +4,7 @@ import com.banking.bankingapplication.Dtos.BankAccountDto;
 import com.banking.bankingapplication.Entities.*;
 import com.banking.bankingapplication.Enum.AccountStatus;
 import com.banking.bankingapplication.Enum.OperationType;
+import com.banking.bankingapplication.Exceptions.BalanceNotFoundException;
 import com.banking.bankingapplication.Exceptions.BankAccountNotFoundException;
 import com.banking.bankingapplication.Exceptions.UserNotFoundException;
 import com.banking.bankingapplication.Mappers.BankingMapper;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -61,9 +63,17 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public List<BankAccountDto> getBankAccountsByUserId(Long id)   {
-        List<BankAccount> bankAccounts=bankAccountRepository.findByCustomerId(id);
+        List<BankAccount> bankAccounts=bankAccountRepository.findByCustomerId(id).stream().map(bA->{
+            if(bA instanceof CurrentAccount){
+                return (CurrentAccount) bA;
+            }
+            else {
+                return (SavingAccount)bA;
+            }
 
-        return  bankingMapper.fromBankAccountListToBankAccountDto(bankAccounts) ;
+        }).collect(Collectors.toList());
+
+        return bankingMapper.fromBankAccountListToBankAccountDto(bankAccounts);
     }
 
     @Override
@@ -87,7 +97,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public void debit(String accountId, double amount, String description) throws BankAccountNotFoundException {
+    public void debit(String accountId, double amount, String description) throws BalanceNotFoundException, BankAccountNotFoundException {
         BankAccountDto bankAccountDto= getBankAccount(accountId);
         BankAccount bankAccount=bankingMapper.fromBankAcountDto(bankAccountDto);
         AccountOperations  debitOperation= new AccountOperations();
@@ -96,20 +106,22 @@ public class BankAccountServiceImpl implements BankAccountService {
         debitOperation.setType(OperationType.DEBIT);
         debitOperation.setDescription(description);
         double initialBalance= bankAccount.getBalnce();
+
         if(((initialBalance-amount)>=0)){
             debitOperation.setAmount(amount);
             bankAccount.setBalnce(bankAccount.getBalnce()-amount);
             bankAccountRepository.save(bankAccount);
             accountOperationRepository.save(debitOperation);
-        } else if (((initialBalance-amount)<0)&&bankAccount instanceof CurrentAccount) {
-            ((CurrentAccount) bankAccount).setOverDraft(Math.abs(initialBalance-amount));
+        } else if (((initialBalance-amount)<0)&& bankAccount instanceof CurrentAccount) {
+
+            ((CurrentAccount) bankAccount).setOverDraft((initialBalance-amount)+((CurrentAccount) bankAccount).getOverDraft());
             debitOperation.setAmount(amount);
+            bankAccount.setBalnce(0);
             bankAccountRepository.save(bankAccount);
             accountOperationRepository.save(debitOperation);
 
         } else if (((initialBalance-amount)<0)&&bankAccount instanceof SavingAccount)
-            throw new BankAccountNotFoundException("Solde inssufisant");
-
+            throw new BalanceNotFoundException("Solde inssufisant");
     }
 
     @Override
@@ -130,7 +142,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public void Trasfer(String AccountIdSource, String accoundIdDestinatin, double amount) throws BankAccountNotFoundException {
+    public void Trasfer(String AccountIdSource, String accoundIdDestinatin, double amount) throws BankAccountNotFoundException, BalanceNotFoundException {
         debit(AccountIdSource,amount,"Trasnsfer to"+" "+accoundIdDestinatin);
         credit(accoundIdDestinatin,amount,"Trasnsfer from "+AccountIdSource);
 

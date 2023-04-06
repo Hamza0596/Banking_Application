@@ -1,7 +1,6 @@
 package com.banking.bankingapplication.Service;
 
 import com.banking.bankingapplication.Dtos.BankAccountDto;
-import com.banking.bankingapplication.Entities.BankAccount;
 import com.banking.bankingapplication.Exceptions.BalanceNotFoundException;
 import com.banking.bankingapplication.Exceptions.BankAccountNotFoundException;
 import com.banking.bankingapplication.Exceptions.UserNotFoundException;
@@ -14,7 +13,7 @@ public interface BankAccountService {
     public BankAccountDto getBankAccount(String bankId) throws BankAccountNotFoundException;
     public void debit(String accountId, double amount , String description) throws BalanceNotFoundException, BankAccountNotFoundException;
     public void credit(String accountId, double amount , String description) throws BankAccountNotFoundException;
-    public void Trasfer(String AccountIdSource , String accoundIdDestinatin, double amount) throws BankAccountNotFoundException;
+    public void Trasfer(String AccountIdSource , String accoundIdDestinatin, double amount) throws BankAccountNotFoundException, BalanceNotFoundException;
 
 
 

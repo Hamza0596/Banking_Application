@@ -61,15 +61,20 @@ public class BankingMapper {
 
 
     public List<BankAccountDto>  fromBankAccountListToBankAccountDto(List<BankAccount> bankAccouts){
-        List<BankAccountDto> bankAccountDtos=bankAccouts.stream().map(bankAcount -> {
-            BankAccountDto bankAccountDto= new BankAccountDto();
-            bankAccountDto.setId(bankAcount.getId());
-            bankAccountDto.setBalnce(bankAcount.getBalnce());
-            bankAccountDto.setStatus(bankAcount.getStatus());
-            bankAccountDto.setCustomer(bankAcount.getCustomer());
-            bankAccountDto.setCreatedAt(bankAcount.getCreatedAt());
 
-            return bankAccountDto;
+        List<BankAccountDto> bankAccountDtos=bankAccouts.stream().map(bankAcount -> {
+
+            if(bankAcount instanceof CurrentAccount){
+              CurrentAcountDto currentAcountDto= new CurrentAcountDto();
+              BeanUtils.copyProperties((CurrentAccount) bankAcount,currentAcountDto);
+                return currentAcountDto;
+            }
+            else{
+                SavingAccountDto savingAccountDto= new SavingAccountDto();
+                BeanUtils.copyProperties((SavingAccount) bankAcount,savingAccountDto);
+                return savingAccountDto;
+            }
+
         }).collect(Collectors.toList());
         return bankAccountDtos;
     }
@@ -81,13 +86,11 @@ public class BankingMapper {
         if(bankAccount instanceof CurrentAccount){
             CurrentAcountDto currentAcountDto=new CurrentAcountDto();
             BeanUtils.copyProperties((CurrentAccount) bankAccount,currentAcountDto);
-            System.out.println(currentAcountDto);
 
             return currentAcountDto;
         }else {
             SavingAccountDto savingAccountDto=new SavingAccountDto();
             BeanUtils.copyProperties((SavingAccount)bankAccount,savingAccountDto);
-            System.out.println(savingAccountDto);
 
             return savingAccountDto;
         }
@@ -96,8 +99,17 @@ public class BankingMapper {
 
     public BankAccount fromBankAcountDto(BankAccountDto bankAccountDto){
         BankAccount bankAccount=new BankAccount();
-        BeanUtils.copyProperties(bankAccountDto,bankAccount);
-        return bankAccount;
+        if(bankAccountDto instanceof CurrentAcountDto){
+         CurrentAccount  currentAccount =new CurrentAccount();
+        BeanUtils.copyProperties((CurrentAcountDto)bankAccountDto,currentAccount);
+           return currentAccount;
+        }
+        else {
+            SavingAccount savingAccount= new SavingAccount();
+            BeanUtils.copyProperties((CurrentAcountDto) bankAccountDto , savingAccount);
+            return savingAccount;
+
+        }
     }
 
 

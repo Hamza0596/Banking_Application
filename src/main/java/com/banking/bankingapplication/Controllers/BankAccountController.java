@@ -2,6 +2,7 @@ package com.banking.bankingapplication.Controllers;
 
 import com.banking.bankingapplication.Dtos.BankAccountDto;
 import com.banking.bankingapplication.Entities.BankAccount;
+import com.banking.bankingapplication.Exceptions.BalanceNotFoundException;
 import com.banking.bankingapplication.Exceptions.BankAccountNotFoundException;
 import com.banking.bankingapplication.Exceptions.UserNotFoundException;
 import com.banking.bankingapplication.Mappers.BankingMapper;
@@ -34,6 +35,14 @@ public class BankAccountController {
     @GetMapping("/{id}")
     public BankAccountDto getBankAccountById(@PathVariable String id) throws BankAccountNotFoundException {
         return bankAccountService.getBankAccount(id);
+    }
+
+    @PostMapping("debit")
+    public  void debit(@RequestParam String accountId ,@RequestParam  Double amount, @RequestParam  String description ) throws BalanceNotFoundException, BankAccountNotFoundException {
+
+
+            bankAccountService.debit(accountId,amount,description);
+
     }
 
 }
