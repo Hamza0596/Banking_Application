@@ -1,5 +1,7 @@
 package com.banking.bankingapplication.Service.ServiceImpl;
 
+import com.banking.bankingapplication.Dtos.AccountHistoryDto;
+import com.banking.bankingapplication.Dtos.AccountOperationDto;
 import com.banking.bankingapplication.Dtos.BankAccountDto;
 import com.banking.bankingapplication.Entities.*;
 import com.banking.bankingapplication.Enum.AccountStatus;
@@ -14,6 +16,10 @@ import com.banking.bankingapplication.Repositories.CustomerRepository;
 import com.banking.bankingapplication.Service.BankAccountService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.querydsl.QPageRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -147,4 +153,34 @@ public class BankAccountServiceImpl implements BankAccountService {
         credit(accoundIdDestinatin,amount,"Trasnsfer from "+AccountIdSource);
 
     }
+
+    @Override
+    public List<AccountOperationDto> accoutntHistory(String accountId) {
+        return bankingMapper.fromAccountOperationListToAccountOperationDtoList(accountOperationRepository.findAccountOperationsByBankAccountId(accountId));
+    }
+
+    @Override
+    public AccountHistoryDto getAccountHistory(String accountId, int page , int size) throws BankAccountNotFoundException {
+        BankAccount bankAccount = bankAccountRepository.findById(accountId).orElseThrow(()->new BankAccountNotFoundException("now bank account found with this id"));
+        Page<AccountOperations> accountOperations=accountOperationRepository.findAccountOperationsByBankAccountId(accountId, PageRequest.of(page,size));
+        List<AccountOperationDto> operationDtos= accountOperationRepository.findAccountOperationsByBankAccountId(accountId, PageRequest.of(page,size)).getContent().stream()
+                .map(operations -> {
+                    AccountOperationDto accountOperationDto=new AccountOperationDto();
+                    BeanUtils.copyProperties(operations,accountOperationDto);
+                    return accountOperationDto;
+                }).collect(Collectors.toList());
+        AccountHistoryDto accountHistoryDto = new AccountHistoryDto();
+        accountHistoryDto.setAccountOperationDtos(operationDtos);
+        accountHistoryDto.setAccountId(accountId);
+        accountHistoryDto.setBalance(bankAccount.getBalnce());
+        accountHistoryDto.setType(bankAccount.getClass().getSimpleName());
+        accountHistoryDto.setSize(size);
+        accountHistoryDto.setCurrentPage(page);
+        accountHistoryDto.setTotalPages(accountOperations.getTotalPages());
+
+    return accountHistoryDto;
+    }
+
+
 }
+

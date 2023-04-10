@@ -1,5 +1,7 @@
 package com.banking.bankingapplication.Service;
 
+import com.banking.bankingapplication.Dtos.AccountHistoryDto;
+import com.banking.bankingapplication.Dtos.AccountOperationDto;
 import com.banking.bankingapplication.Dtos.BankAccountDto;
 import com.banking.bankingapplication.Exceptions.BalanceNotFoundException;
 import com.banking.bankingapplication.Exceptions.BankAccountNotFoundException;
@@ -14,7 +16,6 @@ public interface BankAccountService {
     public void debit(String accountId, double amount , String description) throws BalanceNotFoundException, BankAccountNotFoundException;
     public void credit(String accountId, double amount , String description) throws BankAccountNotFoundException;
     public void Trasfer(String AccountIdSource , String accoundIdDestinatin, double amount) throws BankAccountNotFoundException, BalanceNotFoundException;
-
-
-
+    public List<AccountOperationDto> accoutntHistory(String accountId);
+    public AccountHistoryDto getAccountHistory(String accountId, int Page , int size) throws BankAccountNotFoundException;
 }

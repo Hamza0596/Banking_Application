@@ -1,5 +1,6 @@
 package com.banking.bankingapplication.Controllers;
 
+import com.banking.bankingapplication.Dtos.AccountOperationDto;
 import com.banking.bankingapplication.Dtos.BankAccountDto;
 import com.banking.bankingapplication.Entities.BankAccount;
 import com.banking.bankingapplication.Exceptions.BalanceNotFoundException;
@@ -43,6 +44,12 @@ public class BankAccountController {
 
             bankAccountService.debit(accountId,amount,description);
 
+    }
+
+
+    @GetMapping("/history/{accountId}")
+    public List<AccountOperationDto> accountHistory(@PathVariable String accountId ){
+        return  bankAccountService.accoutntHistory(accountId);
     }
 
 }

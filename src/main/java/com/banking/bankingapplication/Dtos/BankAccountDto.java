@@ -23,4 +23,5 @@ public class BankAccountDto  {
     private Date createdAt;
     private AccountStatus status;
     private Customer customer;
+    private  String type;
 }
