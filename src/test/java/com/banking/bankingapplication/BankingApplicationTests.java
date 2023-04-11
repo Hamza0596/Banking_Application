@@ -8,6 +8,7 @@ class BankingApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("f");
     }
 
 }

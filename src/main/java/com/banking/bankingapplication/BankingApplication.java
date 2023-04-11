@@ -1,24 +1,12 @@
 package com.banking.bankingapplication;
 
-import com.banking.bankingapplication.Entities.CurrentAccount;
-import com.banking.bankingapplication.Entities.Customer;
-import com.banking.bankingapplication.Entities.SavingAccount;
-import com.banking.bankingapplication.Enum.AccountStatus;
-import com.banking.bankingapplication.Exceptions.UserNotFoundException;
-import com.banking.bankingapplication.Repositories.BankAccountRepository;
-import com.banking.bankingapplication.Repositories.CustomerRepository;
-import com.banking.bankingapplication.Service.BankAccountService;
-import com.banking.bankingapplication.Service.CustomerService;
-import com.banking.bankingapplication.Service.ServiceImpl.BankAccountServiceImpl;
+import com.banking.bankingapplication.repositories.BankAccountRepository;
+import com.banking.bankingapplication.repositories.CustomerRepository;
+import com.banking.bankingapplication.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 @SpringBootApplication
 public class BankingApplication implements CommandLineRunner {
@@ -33,7 +21,7 @@ public class BankingApplication implements CommandLineRunner {
     @Autowired
     BankAccountService bankAccountService;
     @Autowired
-    com.banking.bankingapplication.Service.CustomerService customerService;
+    com.banking.bankingapplication.service.CustomerService customerService;
     @Override
     public void run(String... args) throws Exception {
 
