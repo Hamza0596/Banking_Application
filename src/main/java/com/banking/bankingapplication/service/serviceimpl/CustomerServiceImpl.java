@@ -32,7 +32,7 @@ public class CustomerServiceImpl  implements CustomerService {
     }
 
     @Override
-    public CustomerDto customer(Long id) throws UserNotFoundException {
+    public CustomerDto customer(Long id)   {
         return bankingMapper.fromCustomer(customerRepository.findById(id).orElseThrow(()->new UserNotFoundException("No customer was found with this id")));
     }
 

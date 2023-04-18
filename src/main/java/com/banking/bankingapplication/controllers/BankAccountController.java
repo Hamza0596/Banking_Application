@@ -23,35 +23,32 @@ public class BankAccountController {
     private BankingMapper bankingMapper;
 
     @PostMapping("/bankAccount")
-    public BankAccountDto createBankAccount(@RequestParam Long customerId, @RequestParam double balance, @RequestParam String type) throws UserNotFoundException {
+    public BankAccountDto createBankAccount(@RequestParam Long customerId, @RequestParam double balance, @RequestParam String type)  {
 
         return bankAccountService.createBankAccount(customerId,balance,type);
     }
-    @GetMapping("/bankAccounts/{userId}")
+    @GetMapping("/bankaccounts/users/{userId}")
     public List<BankAccountDto> getBankAccountsByUserId(@PathVariable Long userId){
         return bankAccountService.getBankAccountsByUserId(userId);
     }
 
     @GetMapping("bankAccounts/{bankAccountId}")
-    public BankAccountDto getBankAccountById(@PathVariable String bankAccountId) throws BankAccountNotFoundException {
+    public BankAccountDto getBankAccountById(@PathVariable String bankAccountId)  {
         return bankAccountService.getBankAccount(bankAccountId);
     }
 
     @PostMapping("debit")
-    public  void debit(@RequestParam String accountId ,@RequestParam  Double amount, @RequestParam  String description ) throws BalanceNotFoundException, BankAccountNotFoundException {
-
-
+    public  void debit(@RequestParam String accountId ,@RequestParam  Double amount, @RequestParam  String description ) {
             bankAccountService.debit(accountId,amount,description);
-
     }
 
     @PostMapping("credit")
-    public void credit(@RequestParam String accountId,@RequestParam double amount, @RequestParam String description) throws BankAccountNotFoundException {
+    public void credit(@RequestParam String accountId,@RequestParam double amount, @RequestParam String description)  {
         bankAccountService.credit(accountId,amount,description);
     }
 
     @PostMapping("transfert")
-    public void credit(@RequestParam  String accountIdSource , @RequestParam  String accoundIdDestinatin,@RequestParam  double amount) throws BalanceNotFoundException, BankAccountNotFoundException {
+    public void credit(@RequestParam  String accountIdSource , @RequestParam  String accoundIdDestinatin,@RequestParam  double amount)  {
         bankAccountService.transfer(accountIdSource,accoundIdDestinatin,amount);
 
     }
@@ -65,7 +62,7 @@ public class BankAccountController {
     @GetMapping("accounts/{accountId}/pageoperations")
     public AccountHistoryDto getAccountHistory(@PathVariable String accountId,
                                                      @RequestParam(name = "page",defaultValue = "0") int page ,
-                                                     @RequestParam (name = "size",defaultValue = "3")int size) throws BankAccountNotFoundException {
+                                                     @RequestParam (name = "size",defaultValue = "3")int size)  {
         return bankAccountService.getAccountHistory(accountId,page,size);
     }
 

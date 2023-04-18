@@ -23,7 +23,7 @@ public class CustomerController {
 
 
     @GetMapping("/customers/{id}")
-    public CustomerDto getCustomerById(@PathVariable Long id) throws UserNotFoundException {
+    public CustomerDto getCustomerById(@PathVariable Long id)  {
         return customerService.customer(id);
     }
 

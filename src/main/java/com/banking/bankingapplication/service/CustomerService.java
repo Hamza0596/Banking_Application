@@ -9,7 +9,7 @@ public interface CustomerService {
 
     public CustomerDto createCustomer(CustomerDto customerDto);
     public List<CustomerDto> getAllCustomers();
-    public CustomerDto customer(Long id) throws UserNotFoundException;
+    public CustomerDto customer(Long id) ;
 
 
 }
