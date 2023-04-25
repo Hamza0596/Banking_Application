@@ -83,9 +83,17 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public void deleteBankAccount(String id) {
-        bankAccountRepository.deleteById(id);
+    public boolean deleteBankAccount(String id) {
+        try {
+            if(!bankAccountRepository.findById(id).isPresent()){
+                return false;
+            }else
+            bankAccountRepository.deleteById(id);
+            return true;
+        }catch (Exception e){
+            return false;
 
+        }
     }
 
     @Override
@@ -97,11 +105,8 @@ public class BankAccountServiceImpl implements BankAccountService {
 
         }else {
             return bankingMapper.fromBankAccount((SavingAccount) bankAccount);
-
         }
-
     }
-
     @Override
     public void debit(String accountId, double amount, String description) throws BalanceNotFoundException, BankAccountNotFoundException {
         BankAccountDto bankAccountDto= getBankAccount(accountId);
@@ -112,7 +117,6 @@ public class BankAccountServiceImpl implements BankAccountService {
         debitOperation.setType(OperationType.DEBIT);
         debitOperation.setDescription(description);
         double initialBalance= bankAccount.getBalnce();
-
         if(((initialBalance-amount)>=0)){
             debitOperation.setAmount(amount);
             bankAccount.setBalnce(bankAccount.getBalnce()-amount);

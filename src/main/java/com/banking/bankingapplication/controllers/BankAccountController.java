@@ -3,9 +3,6 @@ package com.banking.bankingapplication.controllers;
 import com.banking.bankingapplication.dtos.AccountHistoryDto;
 import com.banking.bankingapplication.dtos.AccountOperationDto;
 import com.banking.bankingapplication.dtos.BankAccountDto;
-import com.banking.bankingapplication.exceptions.BalanceNotFoundException;
-import com.banking.bankingapplication.exceptions.BankAccountNotFoundException;
-import com.banking.bankingapplication.exceptions.UserNotFoundException;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +62,11 @@ public class BankAccountController {
                                                      @RequestParam (name = "size",defaultValue = "3")int size)  {
         return bankAccountService.getAccountHistory(accountId,page,size);
     }
+
+    @DeleteMapping("delete/{id}")
+    public boolean deleteAccountById(@PathVariable String id){
+        return bankAccountService.deleteBankAccount(id);
+    }
+
 
 }

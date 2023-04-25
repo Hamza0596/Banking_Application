@@ -27,6 +27,6 @@ public class BankAccount {
     private AccountStatus status;
     @ManyToOne
     private Customer customer;
-    @OneToMany(mappedBy = "bankAccount")
+    @OneToMany(mappedBy = "bankAccount" , cascade= CascadeType.ALL)
     private List<AccountOperations> operations;
 }
