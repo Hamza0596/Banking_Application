@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @TestPropertySource("classpath:application-test.properties")
-public class CustomerServiceTests {
+ class CustomerServiceTests {
 
     @Autowired
     CustomerService customerService;
@@ -20,24 +20,24 @@ public class CustomerServiceTests {
     @Test
     @Sql(scripts="/Customer_data.sql",executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts="/Delete_Customer_data.sql",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void getAllCustomers() {
-        assertEquals(customerService.getAllCustomers().get(0).getName(),"Hamzaaa");
+     void getAllCustomers() {
+        assertEquals("Hamzaaa",customerService.getAllCustomers().get(0).getName());
     }
 
     @Test
     @Sql(scripts="/Customer_data.sql",executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    public void Customer() {
-        assertEquals(customerService.customer(1L).getName(),"Hamzaaa");
+     void Customer() {
+        assertEquals("Hamzaaa",customerService.customer(1L).getName());
     }
 
     @Test
-    public void createCustomer() {
+     void createCustomer() {
         CustomerDto customerDto = new CustomerDto();
         customerDto.setId(1L);
         customerDto.setName("Mohamed");
         customerDto.setEmail("john.doe@example.com");
 
-        assertEquals(customerService.createCustomer(customerDto).getName(),"Mohamed");
+        assertEquals("Mohamed",customerService.createCustomer(customerDto).getName());
     }
 
 }

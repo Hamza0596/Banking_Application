@@ -87,14 +87,11 @@ public class BankAccountServiceImpl implements BankAccountService {
         try {
             if(!bankAccountRepository.findById(id).isPresent()){
                 return false;
-            }else
+            }else{
             bankAccountRepository.deleteById(id);
-            return true;
+            return true;}
         }catch (Exception e){
-            return false;
-
-        }
-    }
+            return false;}}
 
     @Override
     public BankAccountDto getBankAccount(String bankId) throws BankAccountNotFoundException {
@@ -123,13 +120,11 @@ public class BankAccountServiceImpl implements BankAccountService {
             bankAccountRepository.save(bankAccount);
             accountOperationRepository.save(debitOperation);
         } else if (((initialBalance-amount)<0)&& bankAccount instanceof CurrentAccount) {
-
             ((CurrentAccount) bankAccount).setOverDraft((initialBalance-amount)+((CurrentAccount) bankAccount).getOverDraft());
             debitOperation.setAmount(amount);
             bankAccount.setBalnce(0);
             bankAccountRepository.save(bankAccount);
             accountOperationRepository.save(debitOperation);
-
         } else if (((initialBalance-amount)<0)&&bankAccount instanceof SavingAccount)
             throw new BalanceNotFoundException("Solde inssufisant");
     }
@@ -145,24 +140,30 @@ public class BankAccountServiceImpl implements BankAccountService {
         creditOperation.setType(OperationType.CREDIT);
         creditOperation.setDescription(description);
         creditOperation.setAmount(amount);
-        bankAccount.setBalnce(bankAccount.getBalnce()+amount);
+        if(bankAccount instanceof CurrentAccount && ((CurrentAccount) bankAccount).getOverDraft()<0){
+          double somme=amount+ ((CurrentAccount) bankAccount).getOverDraft();
+            if (somme > 0) {
+                bankAccount.setBalnce(somme);
+                ((CurrentAccount) bankAccount).setOverDraft(0);
+            } else {
+                ((CurrentAccount) bankAccount).setOverDraft(somme);}
+        }
+        else {
+            bankAccount.setBalnce(bankAccount.getBalnce()+amount);
+        }
         bankAccountRepository.save(bankAccount);
         accountOperationRepository.save(creditOperation);
-
     }
 
     @Override
     public void transfer(String accountIdSource, String accoundIdDestinatin, double amount) throws BankAccountNotFoundException, BalanceNotFoundException {
         debit(accountIdSource,amount,"Trasnsfer to"+" "+accoundIdDestinatin);
         credit(accoundIdDestinatin,amount,"Trasnsfer from "+accountIdSource);
-
     }
-
     @Override
     public List<AccountOperationDto> accoutntHistory(String accountId) {
         return bankingMapper.fromAccountOperationListToAccountOperationDtoList(accountOperationRepository.findAccountOperationsByBankAccountId(accountId));
     }
-
     @Override
     public AccountHistoryDto getAccountHistory(String accountId, int page , int size) throws BankAccountNotFoundException {
         BankAccount bankAccount = bankAccountRepository.findById(accountId).orElseThrow(()->new BankAccountNotFoundException("now bank account found with this id"));
