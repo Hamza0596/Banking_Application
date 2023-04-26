@@ -1,7 +1,6 @@
 package com.banking.bankingapplication.controllers;
 
 import com.banking.bankingapplication.dtos.CustomerDto;
-import com.banking.bankingapplication.exceptions.UserNotFoundException;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class CustomerController {
 
     @PostMapping("customers")
     public CustomerDto createCustomer(@RequestBody CustomerDto customerDto){
-        return customerService.createCustomer(customerDto);
-    }
+        return customerService.createCustomer(customerDto);}
 }
 

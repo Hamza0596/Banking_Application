@@ -12,6 +12,6 @@ public class GloblaExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Object> handelUserNotFoundException(UserNotFoundException exception  ){
         ErrorDetails  errorDetails = new ErrorDetails( new Date(), exception.getMessage(),"utilisateur non trouvé avec la reference fournis");
-        return  new ResponseEntity<Object>(errorDetails, HttpStatus.NOT_FOUND);
+        return  new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 }

@@ -1,16 +1,11 @@
 package com.banking.bankingapplication;
 
 import com.banking.bankingapplication.dtos.AccountHistoryDto;
-import com.banking.bankingapplication.dtos.AccountOperationDto;
-import com.banking.bankingapplication.dtos.BankAccountDto;
 import com.banking.bankingapplication.dtos.CurrentAcountDto;
 import com.banking.bankingapplication.entities.AccountOperations;
-import com.banking.bankingapplication.entities.BankAccount;
-import com.banking.bankingapplication.entities.CurrentAccount;
 import com.banking.bankingapplication.enums.OperationType;
 import com.banking.bankingapplication.exceptions.BalanceNotFoundException;
 import com.banking.bankingapplication.repositories.AccountOperationRepository;
-import com.banking.bankingapplication.repositories.BankAccountRepository;
 import com.banking.bankingapplication.service.BankAccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

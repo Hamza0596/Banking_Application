@@ -45,7 +45,7 @@ public class BankAccountController {
     }
 
     @PostMapping("transfert")
-    public void credit(@RequestParam  String accountIdSource , @RequestParam  String accoundIdDestinatin,@RequestParam  double amount)  {
+    public void transfer(@RequestParam  String accountIdSource , @RequestParam  String accoundIdDestinatin,@RequestParam  double amount)  {
         bankAccountService.transfer(accountIdSource,accoundIdDestinatin,amount);
 
     }
