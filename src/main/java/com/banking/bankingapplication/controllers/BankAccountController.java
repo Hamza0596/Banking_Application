@@ -5,6 +5,7 @@ import com.banking.bankingapplication.dtos.AccountOperationDto;
 import com.banking.bankingapplication.dtos.BankAccountDto;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.BankAccountService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,14 +13,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/bankaccount")
+@RequiredArgsConstructor
 public class BankAccountController {
 
-    @Autowired
-    private BankAccountService bankAccountService;
+    private  final BankAccountService bankAccountService;
     @Autowired
     private BankingMapper bankingMapper;
 
-    @PostMapping("/bankAccount")
+    @PostMapping
     public BankAccountDto createBankAccount(@RequestParam Long customerId, @RequestParam double balance, @RequestParam String type)  {
 
         return bankAccountService.createBankAccount(customerId,balance,type);

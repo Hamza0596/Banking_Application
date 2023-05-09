@@ -1,0 +1,27 @@
+version: "3"
+services:
+  app-db:
+    image: postgres:14.2
+    container_name: bankingApplicationContainer
+    volumes:
+      - ./app-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DATABASE=banking
+      - POSTGRES_USERNAME=postgres
+      - POSTGRES_PASSWORD=123456
+    ports:
+      - "5432:5432"
+
+  my-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+    - app-db
+    environment:
+      - DB_SERVER= app-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://app-db:5432/banking
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+

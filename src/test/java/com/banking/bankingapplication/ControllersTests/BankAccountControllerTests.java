@@ -4,6 +4,8 @@ import com.banking.bankingapplication.controllers.BankAccountController;
 import com.banking.bankingapplication.dtos.AccountHistoryDto;
 import com.banking.bankingapplication.dtos.AccountOperationDto;
 import com.banking.bankingapplication.dtos.BankAccountDto;
+import com.banking.bankingapplication.dtos.CustomerDto;
+import com.banking.bankingapplication.entities.Customer;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.BankAccountService;
 import org.junit.jupiter.api.Test;
@@ -161,6 +163,29 @@ import static org.mockito.Mockito.*;
         when(bankAccountService.deleteBankAccount(id)).thenReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/bankaccount/delete/{id}",id))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void createBankAccount() throws Exception {
+        Long customerId=1L;
+        Double balance=2.6;
+        String type="CURR";
+        BankAccountDto bankAccountDto= new BankAccountDto();
+        bankAccountDto.setId("235");
+        bankAccountDto.setType(type);
+        Customer customer= new Customer();
+        customer.setId(customerId);
+        bankAccountDto.setCustomer(customer);
+        bankAccountDto.setBalnce(balance);
+        when(bankAccountService.createBankAccount(1l,balance,type)).thenReturn(bankAccountDto);
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/bankaccount")
+                .param("customerId",customerId.toString())
+                .param("balance",balance.toString())
+                .param("type",type))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect((MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(235));
+
     }
 
 
