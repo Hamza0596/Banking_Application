@@ -1,23 +1,26 @@
 package com.banking.bankingapplication.controllers;
 
 import com.banking.bankingapplication.dtos.CustomerDto;
+import com.banking.bankingapplication.entities.Customer;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("api/customer")
 public class CustomerController {
     @Autowired
     CustomerService customerService;
     @Autowired
     BankingMapper bankingMapper;
-    @GetMapping("/customers")
-    public List<CustomerDto> customers(){
-        return customerService.getAllCustomers();
+    @GetMapping("/customers/{pageNumber}/{size}")
+    public Page<CustomerDto> customers(@PathVariable int pageNumber , @PathVariable int size){
+        return customerService.getAllCustomers(pageNumber, size);
     }
 
 
@@ -29,5 +32,12 @@ public class CustomerController {
     @PostMapping("customers")
     public CustomerDto createCustomer(@RequestBody CustomerDto customerDto){
         return customerService.createCustomer(customerDto);}
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/search/{pageNumber}/{size}")
+    public Page<CustomerDto> customerFilter(@RequestParam String query , @PathVariable int pageNumber, @PathVariable int size ){
+        return customerService.filter(query,pageNumber,size);
+
+    }
 }
 

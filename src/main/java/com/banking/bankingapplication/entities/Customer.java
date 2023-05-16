@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 @Entity
 @AllArgsConstructor
@@ -16,7 +17,10 @@ import java.util.List;
 public class Customer {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private String job;
+    private Date creationDate;
     private String email;
     @OneToMany(mappedBy ="customer")
     @JsonIgnore()

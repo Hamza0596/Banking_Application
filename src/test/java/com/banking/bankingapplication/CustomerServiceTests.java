@@ -27,17 +27,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     @Test
     @Sql(scripts="/Customer_data.sql",executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
      void Customer() {
-        assertEquals("Hamzaaa",customerService.customer(1L).getName());
+        assertEquals("Hamzaaa",customerService.customer(1L).getFirstName());
     }
 
     @Test
      void createCustomer() {
         CustomerDto customerDto = new CustomerDto();
         customerDto.setId(1L);
-        customerDto.setName("Mohamed");
+        customerDto.setFirstName("Mohamed");
         customerDto.setEmail("john.doe@example.com");
 
-        assertEquals("Mohamed",customerService.createCustomer(customerDto).getName());
+        assertEquals("Mohamed",customerService.createCustomer(customerDto).getFirstName());
     }
 
 }

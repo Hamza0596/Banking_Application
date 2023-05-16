@@ -3,6 +3,7 @@ package com.banking.bankingapplication.mappers;
 import com.banking.bankingapplication.dtos.*;
 import com.banking.bankingapplication.entities.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +20,8 @@ public class BankingMapper {
 
     public Customer fromCustomerDto(CustomerDto customerDto){
         Customer customer = new Customer();
-        customer.setName(customerDto.getName());
-        customer.setId(customerDto.getId());
-        customer.setEmail(customerDto.getEmail());
+        BeanUtils.copyProperties(customerDto,customer);
+
         return customer;
     }
 
@@ -29,10 +29,28 @@ public class BankingMapper {
         return customers.stream().map(customer -> {
             CustomerDto customerDto= new CustomerDto();
             customerDto.setEmail(customer.getEmail());
-            customerDto.setName(customer.getName());
+            customerDto.setFirstName(customer.getFirstName());
             customerDto.setId(customer.getId());
+            customerDto.setLastName(customer.getLastName());
+            customerDto.setJob(customer.getJob());
+            customerDto.setCreationDate(customer.getCreationDate());
+
             return customerDto;
         }).collect(Collectors.toList());
+
+    }
+
+    public Page<CustomerDto> fromCustomerListToCustomerPageDto(Page<Customer> customers){
+        return  customers.map(customer -> {
+            CustomerDto customerDto= new CustomerDto();
+            customerDto.setEmail(customer.getEmail());
+            customerDto.setFirstName(customer.getFirstName());
+            customerDto.setId(customer.getId());
+            customerDto.setLastName(customer.getLastName());
+            customerDto.setJob(customer.getJob());
+            customerDto.setCreationDate(customer.getCreationDate());
+            return customerDto;
+        });
 
     }
 
@@ -41,8 +59,11 @@ public class BankingMapper {
          return customersDto.stream().map(customerDto -> {
             Customer customer= new Customer();
             customer.setEmail(customerDto.getEmail());
-            customer.setName(customerDto.getName());
+            customer.setFirstName(customerDto.getFirstName());
             customer.setId(customerDto.getId());
+             customer.setLastName(customerDto.getLastName());
+             customer.setJob(customerDto.getJob());
+             customer.setCreationDate(customerDto.getCreationDate());
             return customer;
         }).collect(Collectors.toList());
     }

@@ -66,7 +66,7 @@ import static org.mockito.Mockito.when;
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(customerDto.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(customerDto.getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(customerDto.getFirstName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(customerDto.getEmail()));
     }
 }
