@@ -11,7 +11,7 @@ public interface CustomerService {
     public CustomerDto createCustomer(CustomerDto customerDto);
       public Page<CustomerDto> getAllCustomers(int pageNumber,int size);
     public CustomerDto customer(Long id) ;
-
-
     Page<CustomerDto> filter(String query, int pageNumber, int size);
+
+    public void deleteUser(Long userId);
 }

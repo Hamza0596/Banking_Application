@@ -45,5 +45,10 @@ public class CustomerServiceImpl  implements CustomerService {
         return bankingMapper.fromCustomerListToCustomerPageDto( customerRepository.findByQuery(query, PageRequest.of(pageNumber,size)));
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+         customerRepository.deleteById(userId);
+    }
+
 
 }

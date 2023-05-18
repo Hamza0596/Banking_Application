@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
         CustomerDto customerDto2 = new CustomerDto();
         customerDtoList.add(customerDto1);
         customerDtoList.add(customerDto2);
-        when(customerService.getAllCustomers()).thenReturn(customerDtoList);
+        when(customerService.getAllCustomers(0,5).getContent()).thenReturn(customerDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get("/api/customer/customers"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))

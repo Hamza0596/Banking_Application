@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     @Sql(scripts="/Customer_data.sql",executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts="/Delete_Customer_data.sql",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
      void getAllCustomers() {
-        assertEquals("Hamzaaa",customerService.getAllCustomers().get(0).getName());
+        assertEquals("Hamzaaa",customerService.getAllCustomers(0,3).getContent().get(0).getFirstName());
     }
 
     @Test

@@ -33,10 +33,22 @@ public class CustomerController {
     public CustomerDto createCustomer(@RequestBody CustomerDto customerDto){
         return customerService.createCustomer(customerDto);}
 
+    @PostMapping("customers/update/{id}")
+    public CustomerDto createCustomer(@RequestBody CustomerDto customerDto,@PathVariable Long id){
+        customerDto.setId(id);
+        return customerService.createCustomer(customerDto);}
+
+
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/search/{pageNumber}/{size}")
     public Page<CustomerDto> customerFilter(@RequestParam String query , @PathVariable int pageNumber, @PathVariable int size ){
         return customerService.filter(query,pageNumber,size);
+
+    }
+
+    @DeleteMapping ("/delete/{userId}")
+    public void deleteCustomerById(@PathVariable Long userId) {
+        customerService.deleteUser(userId);
 
     }
 }
