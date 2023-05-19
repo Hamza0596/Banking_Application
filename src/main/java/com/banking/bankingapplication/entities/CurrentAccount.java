@@ -12,7 +12,7 @@ import javax.persistence.Entity;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CurrentAccount extends BankAccount{
+public class CurrentAccount extends BankAccount {
     private double overDraft;
 
 }

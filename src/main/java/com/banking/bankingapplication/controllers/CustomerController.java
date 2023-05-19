@@ -6,6 +6,8 @@ import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class CustomerController {
     CustomerService customerService;
     @Autowired
     BankingMapper bankingMapper;
+
     @GetMapping("/customers/{pageNumber}/{size}")
     public Page<CustomerDto> customers(@PathVariable int pageNumber , @PathVariable int size){
         return customerService.getAllCustomers(pageNumber, size);

@@ -13,9 +13,14 @@ import java.util.stream.Collectors;
 public class BankingMapper {
 
     public CustomerDto fromCustomer(Customer customer){
-        CustomerDto customerDto=new CustomerDto();
-        BeanUtils.copyProperties(customer,customerDto);
-        return customerDto;
+        if(customer!=null){
+            CustomerDto customerDto=new CustomerDto();
+            BeanUtils.copyProperties(customer,customerDto);
+            return customerDto;
+        }else{
+            return null;
+
+        }
     }
 
     public Customer fromCustomerDto(CustomerDto customerDto){
@@ -34,6 +39,8 @@ public class BankingMapper {
             customerDto.setLastName(customer.getLastName());
             customerDto.setJob(customer.getJob());
             customerDto.setCreationDate(customer.getCreationDate());
+            customerDto.setPassword(customer.getPassword());
+
 
             return customerDto;
         }).collect(Collectors.toList());
@@ -49,6 +56,7 @@ public class BankingMapper {
             customerDto.setLastName(customer.getLastName());
             customerDto.setJob(customer.getJob());
             customerDto.setCreationDate(customer.getCreationDate());
+            customerDto.setPassword(customer.getPassword());
             return customerDto;
         });
 
@@ -64,6 +72,7 @@ public class BankingMapper {
              customer.setLastName(customerDto.getLastName());
              customer.setJob(customerDto.getJob());
              customer.setCreationDate(customerDto.getCreationDate());
+             customer.setPassword(customerDto.getPassword());
             return customer;
         }).collect(Collectors.toList());
     }

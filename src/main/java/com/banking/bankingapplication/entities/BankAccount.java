@@ -18,7 +18,7 @@ import java.util.List;
 @Entity
 @Inheritance(strategy =InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE" )
-public class BankAccount {
+public class BankAccount extends AbstractEntity {
     @Id
     private String id;
     private double balnce;

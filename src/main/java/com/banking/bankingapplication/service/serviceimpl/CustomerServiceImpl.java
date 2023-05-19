@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Date;
-import java.util.List;
+
 @Service
 @Transactional
 
@@ -23,6 +23,9 @@ public class CustomerServiceImpl  implements CustomerService {
     CustomerRepository customerRepository;
     @Autowired
     BankingMapper bankingMapper;
+
+
+
     @Override
     public CustomerDto createCustomer(CustomerDto customerDto) {
         customerDto.setCreationDate(new Date());
@@ -43,6 +46,11 @@ public class CustomerServiceImpl  implements CustomerService {
     @Override
     public Page<CustomerDto> filter(String query, int pageNumber,int size) {
         return bankingMapper.fromCustomerListToCustomerPageDto( customerRepository.findByQuery(query, PageRequest.of(pageNumber,size)));
+    }
+
+    @Override
+    public CustomerDto getCustomerByMail(String email) {
+        return bankingMapper.fromCustomer(customerRepository.findByEmail(email).orElse(null));
     }
 
     @Override

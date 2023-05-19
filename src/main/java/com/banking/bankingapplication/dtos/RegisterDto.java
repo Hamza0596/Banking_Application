@@ -9,15 +9,16 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+public class RegisterDto {
 
-public class CustomerDto {
-    private Long id;
     private String firstName;
-    private String email;
-    private String password;
     private String lastName;
+    private String email;
+    private int phone;
+    private String password;
+    private Date creationDate=new Date();
     private String job;
-    private Date creationDate;
+
 
 
 }

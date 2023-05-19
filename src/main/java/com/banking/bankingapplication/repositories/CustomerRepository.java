@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer,Long> {
 
@@ -23,4 +25,9 @@ public interface CustomerRepository extends JpaRepository<Customer,Long> {
             "OR LOWER(c.job) LIKE CONCAT('%', LOWER(:query), '%') " +
             "OR CAST(c.creationDate AS string) LIKE CONCAT('%', LOWER(:query), '%')")
     Page<Customer> findByQuery(@Param("query") String query, Pageable p);
+
+
+    Optional<Customer> findByEmail(String email);
+
+    Boolean existsByEmail(String email);
 }
