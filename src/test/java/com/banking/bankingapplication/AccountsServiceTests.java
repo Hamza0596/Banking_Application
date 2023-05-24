@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     @Test
 
      void getCurrentAccountByUserId(){
-        assertEquals(2L,bankAccountService.getBankAccountsByUserId(2L).get(0).getCustomer().getId());
+        assertEquals(2L,bankAccountService.getBankAccountsByUserId(2L).get(0).getUser().getId());
     }
 
 

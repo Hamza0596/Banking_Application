@@ -12,68 +12,68 @@ import java.util.stream.Collectors;
 @Service
 public class BankingMapper {
 
-    public CustomerDto fromCustomer(Customer customer){
-        if(customer!=null){
-            CustomerDto customerDto=new CustomerDto();
-            BeanUtils.copyProperties(customer,customerDto);
-            return customerDto;
+    public static UserDto fromCustomer(Users user){
+        if(user !=null){
+            UserDto userDto =new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            return userDto;
         }else{
             return null;
 
         }
     }
 
-    public Customer fromCustomerDto(CustomerDto customerDto){
-        Customer customer = new Customer();
-        BeanUtils.copyProperties(customerDto,customer);
+    public  static Users fromCustomerDto(UserDto userDto){
+        Users user = new Users();
+        BeanUtils.copyProperties(userDto, user);
 
-        return customer;
+        return user;
     }
 
-    public List<CustomerDto>  fromCustomerListToCustomerListDto(List<Customer> customers){
-        return customers.stream().map(customer -> {
-            CustomerDto customerDto= new CustomerDto();
-            customerDto.setEmail(customer.getEmail());
-            customerDto.setFirstName(customer.getFirstName());
-            customerDto.setId(customer.getId());
-            customerDto.setLastName(customer.getLastName());
-            customerDto.setJob(customer.getJob());
-            customerDto.setCreationDate(customer.getCreationDate());
-            customerDto.setPassword(customer.getPassword());
+    public List<UserDto>  fromCustomerListToCustomerListDto(List<Users> users){
+        return users.stream().map(customer -> {
+            UserDto userDto = new UserDto();
+            userDto.setEmail(customer.getEmail());
+            userDto.setFirstName(customer.getFirstName());
+            userDto.setId(customer.getId());
+            userDto.setLastName(customer.getLastName());
+            userDto.setJob(customer.getJob());
+            userDto.setCreationDate(customer.getCreationDate());
+            userDto.setPassword(customer.getPassword());
 
 
-            return customerDto;
+            return userDto;
         }).collect(Collectors.toList());
 
     }
 
-    public Page<CustomerDto> fromCustomerListToCustomerPageDto(Page<Customer> customers){
+    public  Page<UserDto> fromCustomerListToCustomerPageDto(Page<Users> customers){
         return  customers.map(customer -> {
-            CustomerDto customerDto= new CustomerDto();
-            customerDto.setEmail(customer.getEmail());
-            customerDto.setFirstName(customer.getFirstName());
-            customerDto.setId(customer.getId());
-            customerDto.setLastName(customer.getLastName());
-            customerDto.setJob(customer.getJob());
-            customerDto.setCreationDate(customer.getCreationDate());
-            customerDto.setPassword(customer.getPassword());
-            return customerDto;
+            UserDto userDto = new UserDto();
+            userDto.setEmail(customer.getEmail());
+            userDto.setFirstName(customer.getFirstName());
+            userDto.setId(customer.getId());
+            userDto.setLastName(customer.getLastName());
+            userDto.setJob(customer.getJob());
+            userDto.setCreationDate(customer.getCreationDate());
+            userDto.setPassword(customer.getPassword());
+            return userDto;
         });
 
     }
 
 
-    public List<Customer>  fromCustomerDtoListToCustomerList(List<CustomerDto> customersDto){
+    public List<Users>  fromCustomerDtoListToCustomerList(List<UserDto> customersDto){
          return customersDto.stream().map(customerDto -> {
-            Customer customer= new Customer();
-            customer.setEmail(customerDto.getEmail());
-            customer.setFirstName(customerDto.getFirstName());
-            customer.setId(customerDto.getId());
-             customer.setLastName(customerDto.getLastName());
-             customer.setJob(customerDto.getJob());
-             customer.setCreationDate(customerDto.getCreationDate());
-             customer.setPassword(customerDto.getPassword());
-            return customer;
+            Users user = new Users();
+            user.setEmail(customerDto.getEmail());
+            user.setFirstName(customerDto.getFirstName());
+            user.setId(customerDto.getId());
+             user.setLastName(customerDto.getLastName());
+             user.setJob(customerDto.getJob());
+             user.setCreationDate(customerDto.getCreationDate());
+             user.setPassword(customerDto.getPassword());
+            return user;
         }).collect(Collectors.toList());
     }
 

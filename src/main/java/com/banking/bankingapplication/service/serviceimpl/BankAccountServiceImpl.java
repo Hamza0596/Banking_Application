@@ -12,7 +12,7 @@ import com.banking.bankingapplication.exceptions.UserNotFoundException;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.repositories.AccountOperationRepository;
 import com.banking.bankingapplication.repositories.BankAccountRepository;
-import com.banking.bankingapplication.repositories.CustomerRepository;
+import com.banking.bankingapplication.repositories.UserRepository;
 import com.banking.bankingapplication.service.BankAccountService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 public class BankAccountServiceImpl implements BankAccountService {
     private  BankAccountRepository bankAccountRepository;
     private AccountOperationRepository accountOperationRepository;
-    private   CustomerRepository customerRepository;
+    private UserRepository customerRepository;
     private BankingMapper bankingMapper;
     @Override
     public BankAccountDto createBankAccount(Long customerId, double balance, String type) throws UserNotFoundException {
         log.info("hello"+customerId);
 
-        Customer customer = customerRepository.findById(customerId).orElseThrow(()->new UserNotFoundException("user not found"));
+        Users user = customerRepository.findById(customerId).orElseThrow(()->new UserNotFoundException("user not found"));
         log.info("okok");
         BankAccount bankAccount;
         if(type.equals("CURR")){
@@ -50,7 +50,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             currentAccount.setOverDraft(0);
             currentAccount.setStatus(AccountStatus.CREATED);
             currentAccount.setBalnce(balance);
-            currentAccount.setCustomer(customer);
+            currentAccount.setUser(user);
             bankAccount=currentAccount;
         }
         else {
@@ -60,7 +60,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             savingAccount.setIntersetRating(0);
             savingAccount.setStatus(AccountStatus.CREATED);
             savingAccount.setBalnce(balance);
-            savingAccount.setCustomer(customer);
+            savingAccount.setUser(user);
             bankAccount=savingAccount;
         }
 
@@ -69,7 +69,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public List<BankAccountDto> getBankAccountsByUserId(Long id)   {
-        List<BankAccount> bankAccounts=bankAccountRepository.findByCustomerId(id).stream().map(bA->{
+        List<BankAccount> bankAccounts=bankAccountRepository.findByUserId(id).stream().map(bA->{
             if(bA instanceof CurrentAccount){
                 return (CurrentAccount) bA;
             }

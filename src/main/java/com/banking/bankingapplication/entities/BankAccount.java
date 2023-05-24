@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @Entity
 @Inheritance(strategy =InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE" )
-public class BankAccount extends AbstractEntity {
+public class BankAccount implements Serializable {
     @Id
     private String id;
     private double balnce;
@@ -26,7 +27,7 @@ public class BankAccount extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
     @ManyToOne
-    private Customer customer;
+    private Users user;
     @OneToMany(mappedBy = "bankAccount" , cascade= CascadeType.ALL)
     private List<AccountOperations> operations;
 }
