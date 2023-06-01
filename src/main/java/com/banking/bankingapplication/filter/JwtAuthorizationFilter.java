@@ -1,7 +1,7 @@
 package com.banking.bankingapplication.filter;
 
 import com.banking.bankingapplication.constant.SecurityConstant;
-import com.banking.bankingapplication.utility.JwtTokenProvider;
+import com.banking.bankingapplication.utility.JWTTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,38 +19,38 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.banking.bankingapplication.constant.SecurityConstant.OPTIONS_HTTP_METHOD;
+import static com.banking.bankingapplication.constant.SecurityConstant.TOKEN_PREFIX;
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+
 @Component
-public class JwtAuthorizationFilter  extends OncePerRequestFilter {
+public class JwtAuthorizationFilter extends OncePerRequestFilter {
+    private JWTTokenProvider jwtTokenProvider;
 
-
-    @Autowired
-     private  JwtTokenProvider jwtTokenProvider;
-
-
+    public JwtAuthorizationFilter(JWTTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        if(request.getMethod().equalsIgnoreCase(SecurityConstant.OPTIONS_HTTP_METHOD)){
+        if (request.getMethod().equalsIgnoreCase(OPTIONS_HTTP_METHOD)) {
             response.setStatus(HttpStatus.OK.value());
-        }else {
-            String authorizationHeader=request.getHeader(HttpHeaders.AUTHORIZATION);
-            if(authorizationHeader ==null || !authorizationHeader.startsWith(SecurityConstant.TOKEN_PREFIX)){
-                filterChain.doFilter(request,response);
+        } else {
+            String authorizationHeader = request.getHeader(AUTHORIZATION);
+            if (authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_PREFIX)) {
+                filterChain.doFilter(request, response);
                 return;
             }
-
-           String token= authorizationHeader.substring(SecurityConstant.TOKEN_PREFIX.length());
-            String userName= jwtTokenProvider.getsubject(token);
-
-            if(jwtTokenProvider.isTokenValide(userName,token) && SecurityContextHolder.getContext().getAuthentication() ==null){
-                List<GrantedAuthority> authorities=jwtTokenProvider.getAuthorities(token);
-                Authentication authentication= jwtTokenProvider.getAuthentication(userName,authorities,request);
+            String token = authorizationHeader.substring(TOKEN_PREFIX.length());
+            String username = jwtTokenProvider.getSubject(token);
+            if (jwtTokenProvider.isTokenValid(username, token) && SecurityContextHolder.getContext().getAuthentication() == null) {
+                List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(token);
+                Authentication authentication = jwtTokenProvider.getAuthentication(username, authorities, request);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-            }else {
+            } else {
                 SecurityContextHolder.clearContext();
             }
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 }

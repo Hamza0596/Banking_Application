@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-public class Users {
+public class Users   {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
@@ -25,7 +25,6 @@ public class Users {
     private String email;
     private String job;
     private Date creationDate;
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String profileImageUrl;
     private Date LastLoginDate;

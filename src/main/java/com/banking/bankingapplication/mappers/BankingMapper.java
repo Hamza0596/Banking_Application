@@ -41,7 +41,6 @@ public class BankingMapper {
             userDto.setCreationDate(customer.getCreationDate());
             userDto.setPassword(customer.getPassword());
 
-
             return userDto;
         }).collect(Collectors.toList());
 
