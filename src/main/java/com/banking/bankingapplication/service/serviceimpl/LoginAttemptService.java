@@ -39,7 +39,6 @@ public class LoginAttemptService {
 
     public boolean hasExceededMaxAttempts(String username) {
         try {
-            System.out.println("okkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkaaaaaaaauuuuuuuuuuuuuuuuuuu");
             return loginAttemptCache.get(username) >= MAXIMUM_NUMBER_OF_ATTEMPTS;
         } catch (ExecutionException e) {
             e.printStackTrace();

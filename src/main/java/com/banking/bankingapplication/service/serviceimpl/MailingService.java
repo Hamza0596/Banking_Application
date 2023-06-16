@@ -13,12 +13,11 @@ public class MailingService {
     JavaMailSender javaMailSender;
 
     public void sendEmail(String emailAdresse, String body ,String Subject){
-        System.out.println(emailAdresse + body+Subject);
-        SimpleMailMessage ConfirmationMessage = new SimpleMailMessage();
-        ConfirmationMessage.setTo(emailAdresse);
-        ConfirmationMessage.setText(body);
-        ConfirmationMessage.setSubject(Subject);
-        javaMailSender.send(ConfirmationMessage);
+        SimpleMailMessage confirmationMessage = new SimpleMailMessage();
+        confirmationMessage.setTo(emailAdresse);
+        confirmationMessage.setText(body);
+        confirmationMessage.setSubject(Subject);
+        javaMailSender.send(confirmationMessage);
     }
 
 

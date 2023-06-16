@@ -1,12 +1,9 @@
 package com.banking.bankingapplication.configuration;
 
-import com.banking.bankingapplication.constant.SecurityConstant;
 import com.banking.bankingapplication.filter.JwtAccessDeniedHandler;
 import com.banking.bankingapplication.filter.JwtAuthenticationEntryPoint;
 import com.banking.bankingapplication.filter.JwtAuthorizationFilter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,10 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static com.banking.bankingapplication.constant.SecurityConstant.PUBLIC_URLS;
 
 @Configuration
 @EnableWebSecurity
@@ -55,7 +50,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable().cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests().antMatchers("/api/user/login","/api/user/register").permitAll()
+                .and().authorizeRequests().antMatchers("/swagger-ui/**","/api/user/login","/api/user/register","/user/image/**","/api/user/users/**","/api/user/search/**","/api/user/update","/api/user/add","/api/user/delete/**","/api/user/reset/**" ).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)

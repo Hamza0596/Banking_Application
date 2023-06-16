@@ -1,10 +1,7 @@
 package com.banking.bankingapplication.filter;
 
-import com.banking.bankingapplication.constant.SecurityConstant;
 import com.banking.bankingapplication.domain.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.stereotype.Component;

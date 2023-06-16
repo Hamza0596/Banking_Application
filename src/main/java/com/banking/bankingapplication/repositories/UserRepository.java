@@ -8,13 +8,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<Users,Long> {
 
-  /* @Query(value ="select c from Users c where lower(c.firstName) LIKE CONCAT ('%', lower(:query),'%')"+"OR lower(c.email) LIKE CONCAT ('%', lower(:query),'%')"+"OR lower(c.job) LIKE CONCAT ('%', lower(:query),'%')")
-    Page<Users> findByQuery(String query, Pageable p);*/
+
 
 
     @Query(value = "SELECT c FROM Users c WHERE " +

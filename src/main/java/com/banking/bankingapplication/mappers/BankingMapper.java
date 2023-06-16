@@ -40,6 +40,8 @@ public class BankingMapper {
             userDto.setJob(customer.getJob());
             userDto.setCreationDate(customer.getCreationDate());
             userDto.setPassword(customer.getPassword());
+            userDto.setRoles(customer.getRoles());
+            userDto.setUserName(customer.getUserName());
 
             return userDto;
         }).collect(Collectors.toList());
@@ -56,6 +58,8 @@ public class BankingMapper {
             userDto.setJob(customer.getJob());
             userDto.setCreationDate(customer.getCreationDate());
             userDto.setPassword(customer.getPassword());
+            userDto.setRoles(customer.getRoles());
+            userDto.setUserName(customer.getUserName());
             return userDto;
         });
 

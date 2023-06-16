@@ -1,9 +1,10 @@
 package com.banking.bankingapplication.controllers;
 
-import com.banking.bankingapplication.constant.FileConstant;
 import com.banking.bankingapplication.constant.SecurityConstant;
 import com.banking.bankingapplication.domain.UserPrincipal;
+import com.banking.bankingapplication.dtos.ResetPasswordDto;
 import com.banking.bankingapplication.dtos.UserDto;
+import com.banking.bankingapplication.enums.Role;
 import com.banking.bankingapplication.exceptions.*;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.UserService;
@@ -26,6 +27,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static com.banking.bankingapplication.constant.FileConstant.*;
 import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 
 @RestController
@@ -48,6 +50,11 @@ public class UserController {
         return userService.getUsers(pageNumber, size);
     }
 
+    @GetMapping("/users/roles")
+    public Role[] getRoles(){
+        return Role.class.getEnumConstants();
+
+    }
 
     @GetMapping("/users/{id}")
     public UserDto getUserById(@PathVariable Long id)  {
@@ -55,8 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserDto Register(@RequestBody UserDto userDto) throws EmailExistException, UsernameExistException {
-           System.out.println("okkkkkk");
+    public UserDto register(@RequestBody UserDto userDto) throws EmailExistException, UsernameExistException {
            return userService.register(userDto);}
 
 
@@ -66,7 +72,7 @@ public class UserController {
         UserDto loginUser = userService.findUserByUserName(user.getUserName());
         UserPrincipal userPrincipal = new UserPrincipal(BankingMapper.fromCustomerDto(loginUser));
         HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-        return new ResponseEntity<UserDto>(loginUser, jwtHeader, HttpStatus.OK);
+        return new ResponseEntity<>(loginUser, jwtHeader, HttpStatus.OK);
     }
 
 
@@ -79,44 +85,55 @@ public class UserController {
     }
 
     @DeleteMapping ("/delete/{userId}")
-    @PreAuthorize("hasAnyAuthority('user:delete')")
     public void deleteUserById(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+        userService.deleteUser(userId) ;
 
     }
 
-    @PostMapping("/reset")
-    public void changePassword( String email) throws BadCredentialsException, EmailNotFoundException {
-        userService.resetPassword("hamzabouachir@yahoo.com");
+    @PostMapping("/change")
+    public void changePassword(@RequestBody ResetPasswordDto  resetPasswordDto) throws  EmailNotFoundException, PasswordDoNotMatcheException {
+        userService.chagePassword(resetPasswordDto );
     }
+
+    @GetMapping("/reset/mail/{email}")
+    public void sendEmailResetPassword(@PathVariable String email) throws  EmailNotFoundException, PasswordDoNotMatcheException {
+        userService.sendEmailResetPassword(email);
+    }
+
+    @GetMapping("/reset/{email}/{token}")
+    public void resetPassword(@PathVariable String email, @PathVariable String token) throws EmailNotFoundException, PasswordDoNotMatcheException, restTokenExpiredException {
+        userService.resetPassword(email,token);
+    }
+
+
 
     @PostMapping("/add")
     public ResponseEntity<UserDto> addNewUser(@RequestParam String firstName,
                                             @RequestParam String lastName,
-                                            @RequestParam String username,
+                                            @RequestParam String userName,
                                             @RequestParam String email,
                                             @RequestParam String job,
                                             @RequestParam String role,
                                             @RequestParam boolean isActive,
                                             @RequestParam boolean isNonLocked,
                                             @RequestParam(required = false) MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        UserDto newUser = userService.addNewUser(firstName,lastName,username,email,job,role, isNonLocked, isActive, profileImage);
+        UserDto newUser = userService.addNewUser(firstName,lastName,userName,email,job,role, isNonLocked, isActive, profileImage);
         return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<UserDto> updateUser(@RequestParam(value = "currentUserName" ) String currentUserName,
+    public UserDto updateUser(@RequestParam(  "currentUserName" ) String currentUserName,
                                               @RequestParam( required = false) String newFirstName,
                                               @RequestParam("newLastName") String newLastName,
                                               @RequestParam("newUsername") String newUsername,
                                               @RequestParam("newEmail") String newEmail,
                                               @RequestParam("newJob") String newJob,
                                               @RequestParam("newRole") String role,
-                                              @RequestParam("isActive") boolean isActive,
-                                              @RequestParam("isNonLocked") boolean isNonLocked,
+                                              @RequestParam("active") boolean isActive,
+                                              @RequestParam("notLocked") boolean isNonLocked,
                                               @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
         UserDto updatedUser = userService.updateUser( currentUserName, newFirstName, newLastName,  newUsername,  newEmail, newJob, role, isNonLocked,  isActive,  profileImage);
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        return updatedUser;
     }
 
 
@@ -129,7 +146,7 @@ public class UserController {
 
     @GetMapping(path = "/image/profile/{username}", produces = IMAGE_JPEG_VALUE)
     public byte[] getTempProfileImage(@PathVariable("username") String username) throws IOException {
-        URL url = new URL(FileConstant.TEMP_PROFILE_IMAGE_BASE_URL + username);
+        URL url = new URL(TEMP_PROFILE_IMAGE_BASE_URL + username);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         try (InputStream inputStream = url.openStream()) {
             int bytesRead;
@@ -143,8 +160,9 @@ public class UserController {
 
     @GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
     public byte[] getProfileImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName) throws IOException {
-        return Files.readAllBytes(Paths.get(FileConstant.USER_FOLDER + username + FileConstant.FORWARD_SLASH + fileName));
+        return Files.readAllBytes(Paths.get(USER_FOLDER + username + FORWARD_SLASH + fileName));
     }
+
 
     @GetMapping("find/{userName}")
     public UserDto  getUser( @PathVariable String userName){

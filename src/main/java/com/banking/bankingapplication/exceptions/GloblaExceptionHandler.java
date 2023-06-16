@@ -37,12 +37,12 @@ public class GloblaExceptionHandler implements ErrorController {
 
     @ExceptionHandler(UsernameExistException.class)
     public ResponseEntity<HttpResponse> UsernameExistException() {
-        return createHttpResponse(HttpStatus.BAD_REQUEST, INTERNAL_SERVER_ERROR_MSG);
+        return createHttpResponse(HttpStatus.BAD_REQUEST, "User name already exists");
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<HttpResponse> badCredentialsException() {
-        return createHttpResponse(HttpStatus.BAD_REQUEST, INCORRECT_CREDENTIALS);
+    public ResponseEntity<HttpResponse> badCredentialsException(BadCredentialsException exception) {
+        return createHttpResponse(HttpStatus.BAD_REQUEST, "exception.getMessage()");
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -53,6 +53,10 @@ public class GloblaExceptionHandler implements ErrorController {
     @ExceptionHandler(LockedException.class)
     public ResponseEntity<HttpResponse> lockedException() {
         return createHttpResponse(HttpStatus.UNAUTHORIZED, ACCOUNT_LOCKED);
+    }
+    @ExceptionHandler(restTokenExpiredException.class)
+    public ResponseEntity<HttpResponse> restTokenExpiredException( Exception restTokenExpiredException) {
+        return createHttpResponse(HttpStatus.UNAUTHORIZED, restTokenExpiredException.getMessage());
     }
 
     @ExceptionHandler(TokenExpiredException.class)
@@ -77,10 +81,12 @@ public class GloblaExceptionHandler implements ErrorController {
         return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 
-//    @ExceptionHandler(NoHandlerFoundException.class)
-//    public ResponseEntity<HttpResponse> noHandlerFoundException(NoHandlerFoundException e) {
-//        return createHttpResponse(BAD_REQUEST, "There is no mapping for this URL");
-//    }
+    @ExceptionHandler(PasswordDoNotMatcheException.class)
+    public ResponseEntity<HttpResponse> passwordDoNotMatcheException(PasswordDoNotMatcheException exception) {
+        return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+    }
+
+
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<HttpResponse> methodNotSupportedException(HttpRequestMethodNotSupportedException exception) {

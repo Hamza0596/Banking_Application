@@ -1,6 +1,9 @@
 package com.banking.bankingapplication.constant;
 
 public class FileConstant {
+    private FileConstant(){
+
+    }
     public static final String USER_IMAGE_PATH = "/user/image/";
     public static final String JPG_EXTENSION = "jpg";
     public static final String USER_FOLDER = System.getProperty("user.home") + "/baking/user/";

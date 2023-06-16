@@ -19,6 +19,7 @@ public class UserDto {
     private String userName;
     private String job;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 
     private String password;
     private String roles;
@@ -30,7 +31,7 @@ public class UserDto {
     private boolean isActive;
     private boolean isNotLocked;
 
-    private Date LastLoginDate;
-    private Date LastLoginDateDisplay;
+    private Date lastLoginDate;
+    private Date lastLoginDateDisplay;
 
 }

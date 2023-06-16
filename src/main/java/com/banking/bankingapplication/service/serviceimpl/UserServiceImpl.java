@@ -2,13 +2,15 @@ package com.banking.bankingapplication.service.serviceimpl;
 
 import com.banking.bankingapplication.constant.FileConstant;
 import com.banking.bankingapplication.domain.UserPrincipal;
-import com.banking.bankingapplication.dtos.PasswordChangeRequestDto;
+import com.banking.bankingapplication.dtos.ResetPasswordDto;
 import com.banking.bankingapplication.dtos.UserDto;
+import com.banking.bankingapplication.entities.PasswordResetToken;
 import com.banking.bankingapplication.entities.Users;
 import com.banking.bankingapplication.enums.Role;
 import com.banking.bankingapplication.exceptions.*;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.repositories.UserRepository;
+import com.banking.bankingapplication.service.PasswordResetTokenService;
 import com.banking.bankingapplication.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,10 +36,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static org.springframework.http.MediaType.*;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -58,6 +59,9 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     LoginAttemptService loginAttemptService;
     @Autowired
     MailingService mailingService;
+
+    @Autowired
+    PasswordResetTokenService passwordResetTokenService;
 
 
     @Override
@@ -120,7 +124,7 @@ public class UserServiceImpl implements UserService , UserDetailsService {
 
     @Override
     public UserDto user(Long id)   {
-        return bankingMapper.fromCustomer(userRepository.findById(id).orElseThrow(()->new UserNotFoundException("No user was found with this id")));
+        return BankingMapper.fromCustomer(userRepository.findById(id).orElseThrow(()->new UserNotFoundException("No user was found with this id")));
     }
 
     @Override
@@ -158,8 +162,8 @@ public class UserServiceImpl implements UserService , UserDetailsService {
             user.setLastLoginDateDisplay(user.getLastLoginDate());
             user.setLastLoginDate(new Date());
             userRepository.save(user);
-            UserPrincipal userPrincipal = new UserPrincipal(user);
-            return userPrincipal;
+
+            return new UserPrincipal(user);
         }
     }
 
@@ -178,13 +182,14 @@ public class UserServiceImpl implements UserService , UserDetailsService {
 
     }
     @Override
-    public UserDto addNewUser(String firstName, String lastName, String username, String email, String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        validateNewUsernameAndEmail(EMPTY,username,email);
+    public UserDto addNewUser(String firstName, String lastName, String userName, String email, String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
+       System.out.println("Bonjour"+userName);
+        validateNewUsernameAndEmail(EMPTY,userName,email);
         UserDto userDto=new UserDto();
         String password = generatePassword();
         String encodedPassword= bCryptPasswordEncoder.encode(password);
         userDto.setPassword(encodedPassword);
-        userDto.setUserName(username);
+        userDto.setUserName(userName);
         userDto.setFirstName(firstName);
         userDto.setLastName(lastName);
         userDto.setEmail(email);
@@ -194,7 +199,7 @@ public class UserServiceImpl implements UserService , UserDetailsService {
         userDto.setNotLocked(true);
         userDto.setRoles(getRoleEnumName(role).name());
         userDto.setAuthorities(getRoleEnumName(role).getAuthorities());
-        userDto.setProfileImageUrl(getTemporaryProfileImageUrl(username));
+        userDto.setProfileImageUrl(getTemporaryProfileImageUrl(userName));
         Users user= userRepository.save(BankingMapper.fromCustomerDto(userDto));
         saveProfileImage(user,profileImage);
         mailingService.sendEmail(userDto.getEmail(),password,"Your Password ");
@@ -207,21 +212,48 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     private String getTemporaryProfileImageUrl(String username) {
         return ServletUriComponentsBuilder.fromCurrentContextPath().path(FileConstant.DEFAULT_USER_IMAGE_PATH + username).toUriString();
     }
-    private void saveProfileImage(Users user, MultipartFile profileImage) throws IOException, NotAnImageFileException {
-        if (profileImage != null) {
-            if(!Arrays.asList(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
-                throw new NotAnImageFileException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
-            }
-            Path userFolder = Paths.get(USER_FOLDER + user.getUserName()).toAbsolutePath().normalize();
-            if(!Files.exists(userFolder)) {
-                Files.createDirectories(userFolder);
-            }
-            Files.deleteIfExists(Paths.get(userFolder.toString(), user.getUserName() + DOT + JPG_EXTENSION));
-            Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUserName() + DOT + JPG_EXTENSION), StandardCopyOption.REPLACE_EXISTING);
-            user.setProfileImageUrl(setProfileImageUrl(user.getUserName()));
-            userRepository.save(user);
+    @Override
+    public UserDto updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
+        try {
+            UserDto user = validateNewUsernameAndEmail(username, null, null);
+            saveProfileImage(BankingMapper.fromCustomerDto(user), profileImage);
+            return user;
+        } catch (UserNotFoundException | EmailExistException | UsernameExistException | NotAnImageFileException e) {
+            // Handle specific exceptions here or rethrow them if necessary
+            throw e;
+        } catch (IOException e) {
+            // Handle IOException here
+            // For example, log the error or throw a custom exception
+            throw new IOException("Error occurred while updating profile image: " + e.getMessage(), e);
         }
     }
+
+    private void saveProfileImage(Users user, MultipartFile profileImage) throws IOException, NotAnImageFileException {
+        if (profileImage != null) {
+            try {
+                if (!Arrays.asList(MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_GIF_VALUE).contains(profileImage.getContentType())) {
+                    throw new NotAnImageFileException(profileImage.getOriginalFilename() + NOT_AN_IMAGE_FILE);
+                }
+                Path userFolder = Paths.get(USER_FOLDER + user.getUserName()).toAbsolutePath().normalize();
+                if (!Files.exists(userFolder)) {
+                    Files.createDirectories(userFolder);
+                }
+                Files.deleteIfExists(Paths.get(userFolder.toString(), user.getUserName() + DOT + JPG_EXTENSION));
+                Files.copy(profileImage.getInputStream(), userFolder.resolve(user.getUserName() + DOT + JPG_EXTENSION), StandardCopyOption.REPLACE_EXISTING);
+                user.setProfileImageUrl(setProfileImageUrl(user.getUserName()));
+                userRepository.save(user);
+            } catch (IOException e) {
+                // Handle IOException here
+                // For example, log the error or throw a custom exception
+                throw new IOException("Error occurred while saving profile image: " + e.getMessage(), e);
+            } catch (NotAnImageFileException e) {
+                // Handle NotAnImageFileException here
+                // For example, log the error or throw a custom exception
+                throw e;
+            }
+        }
+    }
+
 
 
     private String setProfileImageUrl(String username) {
@@ -232,45 +264,81 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     @Override
     public UserDto updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail,String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
         UserDto currentUser=validateNewUsernameAndEmail(currentUsername , newUsername,newEmail);
+        if(currentUser!=null){
         currentUser.setUserName(newUsername != null ? newUsername : currentUser.getUserName());
         currentUser.setFirstName(newFirstName != null ? newFirstName : currentUser.getFirstName());
         currentUser.setLastName(newLastName != null ? newLastName : currentUser.getLastName());
         currentUser.setEmail(newEmail);
         currentUser.setJob(job);
         currentUser.setCreationDate(new Date());
-        currentUser.setActive(true);
-        currentUser.setNotLocked(true);
+        currentUser.setActive(isActive);
+        currentUser.setNotLocked(isNonLocked);
         currentUser.setRoles(getRoleEnumName(role).name());
         currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
         currentUser.setProfileImageUrl(getTemporaryProfileImageUrl(newUsername));
         userRepository.save(BankingMapper.fromCustomerDto(currentUser));
         saveProfileImage(BankingMapper.fromCustomerDto(currentUser),profileImage);
-
-        return currentUser;
-    }
-    @Override
-    public UserDto updateProfileImage(String username, MultipartFile profileImage) throws UserNotFoundException, EmailExistException, UsernameExistException, IOException, NotAnImageFileException {
-        UserDto user = validateNewUsernameAndEmail(username, null, null);
-        saveProfileImage(BankingMapper.fromCustomerDto(user), profileImage);
-        return user;
-    }
-
-
-    @Override
-    public void resetPassword(String email) throws EmailNotFoundException {
-        Users user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new EmailNotFoundException("NO_USER_FOUND_BY_EMAIL" + email);
         }
-        String password = generatePassword();
-        String encodedPassword= bCryptPasswordEncoder.encode(password);
-        user.setPassword(encodedPassword);
-        userRepository.save(user);
-        mailingService.sendEmail(email, password, "your new password");
+        return currentUser;
+
+
+    }
+
+
+
+    @Override
+    public void chagePassword(ResetPasswordDto resetPasswordDto ) throws EmailNotFoundException, PasswordDoNotMatcheException {
+        Users user = userRepository.findByEmail(resetPasswordDto.getEmail());
+        if (user == null) {
+            throw new EmailNotFoundException("NO_USER_FOUND_BY_EMAIL" + resetPasswordDto.getEmail());
+        }
+        if (bCryptPasswordEncoder.matches(resetPasswordDto.getOldPassword(), user.getPassword())) {
+            String encodedNewPassword = bCryptPasswordEncoder.encode(resetPasswordDto.getNewPassword());
+            user.setPassword(encodedNewPassword);
+            userRepository.save(user);
+            mailingService.sendEmail(resetPasswordDto.getEmail(), resetPasswordDto.getNewPassword(), "your new password");
+        }else {
+            throw new PasswordDoNotMatcheException("Incorrecet old paswword");
+        }
 
 }
-    private String encodePassword(String password) {
-        return bCryptPasswordEncoder.encode(password);
+
+    @Override
+    public void sendEmailResetPassword(String email) throws EmailNotFoundException {
+        Optional<Users> userOptional = Optional.ofNullable(userRepository.findByEmail(email));
+        Users user = userOptional.orElseThrow(() -> new EmailNotFoundException("NO_USER_FOUND_BY_EMAIL " +email));
+        String token = generateUniqueToken();
+
+        // Créez un objet PasswordResetToken
+        LocalDateTime expirationDate = LocalDateTime.now().plusSeconds(60); // Expiration dans 1 heure
+        PasswordResetToken resetToken = new PasswordResetToken(token, expirationDate, user);
+        passwordResetTokenService.save(resetToken);
+        mailingService.sendEmail(user.getEmail(), "http://localhost:4200/resetpassword/"+email+"/"+token, "Reseting password");
+
+    }
+
+    private String generateUniqueToken() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
+
+    @Override
+    public void resetPassword(String email,String token) throws EmailNotFoundException, restTokenExpiredException {
+        Users user=userRepository.findByEmail(email);
+        PasswordResetToken resetToken= passwordResetTokenService.findByToken(token);
+        if(user==null ){
+            throw  new EmailNotFoundException("NO_USER_FOUND_BY_EMAIL " +email);
+        }
+        if( resetToken.isExpired()){
+            throw  new restTokenExpiredException("reset token expired");
+        }
+
+        String password = generatePassword();
+        String encodedNewPassword = bCryptPasswordEncoder.encode(password);
+        user.setPassword(encodedNewPassword);
+        userRepository.save(user);
+        mailingService.sendEmail(user.getEmail(), password, password);
+
     }
 
 

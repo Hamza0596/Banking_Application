@@ -20,7 +20,6 @@ public class AuthenticationSuccessListener {
 
     @EventListener({AuthenticationSuccessEvent.class, InteractiveAuthenticationSuccessEvent.class})
     public void onAuthenticationSuccess(AuthenticationSuccessEvent event) {
-        System.out.println("sssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
         Object principal = event.getAuthentication().getPrincipal();
         if(principal instanceof UserPrincipal) {
             UserPrincipal user = (UserPrincipal) event.getAuthentication().getPrincipal();
