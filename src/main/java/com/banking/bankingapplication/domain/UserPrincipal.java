@@ -1,8 +1,7 @@
 package com.banking.bankingapplication.domain;
 
 import com.banking.bankingapplication.entities.Users;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

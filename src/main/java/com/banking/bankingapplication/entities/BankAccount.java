@@ -26,7 +26,8 @@ public class BankAccount implements Serializable {
     private Date createdAt;
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
-    @ManyToOne
+    @ManyToOne     @JoinColumn(name = "user_id") // Specify the foreign key column
+
     private Users user;
     @OneToMany(mappedBy = "bankAccount" , cascade= CascadeType.ALL)
     private List<AccountOperations> operations;

@@ -24,7 +24,7 @@ public interface UserService {
     UserDto updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail,String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException;
     void chagePassword(ResetPasswordDto resetPasswordDto ) throws EmailNotFoundException, PasswordDoNotMatcheException;
    void sendEmailResetPassword(String email) throws EmailNotFoundException;
-   void resetPassword(String email, String token) throws EmailNotFoundException, restTokenExpiredException;
+   void resetPassword(String email, String token) throws EmailNotFoundException, RestTokenExpiredException;
     public UserDto updateProfileImage(String username, MultipartFile profileImage) throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException;
 
 

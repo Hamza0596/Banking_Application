@@ -14,6 +14,8 @@ import com.banking.bankingapplication.service.PasswordResetTokenService;
 import com.banking.bankingapplication.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -46,6 +48,8 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService , UserDetailsService {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
 
     @Autowired
     UserRepository userRepository;
@@ -183,7 +187,7 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     }
     @Override
     public UserDto addNewUser(String firstName, String lastName, String userName, String email, String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-       System.out.println("Bonjour"+userName);
+       logger.info("Bonjour");
         validateNewUsernameAndEmail(EMPTY,userName,email);
         UserDto userDto=new UserDto();
         String password = generatePassword();
@@ -323,14 +327,14 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     }
 
     @Override
-    public void resetPassword(String email,String token) throws EmailNotFoundException, restTokenExpiredException {
+    public void resetPassword(String email,String token) throws EmailNotFoundException, RestTokenExpiredException {
         Users user=userRepository.findByEmail(email);
         PasswordResetToken resetToken= passwordResetTokenService.findByToken(token);
         if(user==null ){
             throw  new EmailNotFoundException("NO_USER_FOUND_BY_EMAIL " +email);
         }
         if( resetToken.isExpired()){
-            throw  new restTokenExpiredException("reset token expired");
+            throw  new RestTokenExpiredException("reset token expired");
         }
 
         String password = generatePassword();

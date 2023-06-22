@@ -26,10 +26,11 @@ public class Users implements Serializable {
     private String email;
     private String job;
     private Date creationDate;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String profileImageUrl;
-    private Date LastLoginDate;
-    private Date LastLoginDateDisplay;
+    private Date lastLoginDate;
+    private Date lastLoginDateDisplay;
     private String roles;
     private String[] authorities;
     private boolean isActive;

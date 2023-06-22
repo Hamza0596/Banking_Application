@@ -4,7 +4,7 @@ import com.banking.bankingapplication.dtos.AccountHistoryDto;
 import com.banking.bankingapplication.dtos.CurrentAcountDto;
 import com.banking.bankingapplication.entities.AccountOperations;
 import com.banking.bankingapplication.enums.OperationType;
-import com.banking.bankingapplication.exceptions.BalanceNotFoundException;
+import com.banking.bankingapplication.exceptions.InsufisantSoldeException;
 import com.banking.bankingapplication.repositories.AccountOperationRepository;
 import com.banking.bankingapplication.service.BankAccountService;
 import org.junit.jupiter.api.Test;
@@ -86,7 +86,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
     @Test
      void debitWithInsufisantBalanceAndSavingAccount(){
-        assertThrows(BalanceNotFoundException.class, () -> bankAccountService.debit("24aa50b7-af9a-4245-a658-f0ba2ac25038", 1500.0, "Test debit"));
+        assertThrows(InsufisantSoldeException.class, () -> bankAccountService.debit("24aa50b7-af9a-4245-a658-f0ba2ac25038", 1500.0, "Test debit"));
 
     }
 

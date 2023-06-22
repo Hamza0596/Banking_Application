@@ -14,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -96,12 +95,12 @@ public class UserController {
     }
 
     @GetMapping("/reset/mail/{email}")
-    public void sendEmailResetPassword(@PathVariable String email) throws  EmailNotFoundException, PasswordDoNotMatcheException {
+    public void sendEmailResetPassword(@PathVariable String email) throws  EmailNotFoundException {
         userService.sendEmailResetPassword(email);
     }
 
     @GetMapping("/reset/{email}/{token}")
-    public void resetPassword(@PathVariable String email, @PathVariable String token) throws EmailNotFoundException, PasswordDoNotMatcheException, restTokenExpiredException {
+    public void resetPassword(@PathVariable String email, @PathVariable String token) throws EmailNotFoundException, RestTokenExpiredException {
         userService.resetPassword(email,token);
     }
 
@@ -132,8 +131,8 @@ public class UserController {
                                               @RequestParam("active") boolean isActive,
                                               @RequestParam("notLocked") boolean isNonLocked,
                                               @RequestParam(value = "profileImage", required = false) MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-        UserDto updatedUser = userService.updateUser( currentUserName, newFirstName, newLastName,  newUsername,  newEmail, newJob, role, isNonLocked,  isActive,  profileImage);
-        return updatedUser;
+
+        return userService.updateUser( currentUserName, newFirstName, newLastName,  newUsername,  newEmail, newJob, role, isNonLocked,  isActive,  profileImage);
     }
 
 

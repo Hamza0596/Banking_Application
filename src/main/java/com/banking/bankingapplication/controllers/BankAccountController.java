@@ -6,6 +6,7 @@ import com.banking.bankingapplication.dtos.BankAccountDto;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,11 @@ public class BankAccountController {
         return bankAccountService.getBankAccountsByUserId(userId);
     }
 
+    @GetMapping("/bankaccounts")
+    public List<BankAccountDto> getBankAccountsByUserId(){
+        return bankAccountService.getBankAccounts();
+    }
+
     @GetMapping("bankAccounts/{bankAccountId}")
     public BankAccountDto getBankAccountById(@PathVariable String bankAccountId)  {
         return bankAccountService.getBankAccount(bankAccountId);
@@ -38,6 +44,11 @@ public class BankAccountController {
     @PostMapping("debit")
     public  void debit(@RequestParam String accountId ,@RequestParam  Double amount, @RequestParam  String description ) {
             bankAccountService.debit(accountId,amount,description);
+    }
+
+    @PostMapping("verify")
+    public ResponseEntity<String> verify(@RequestParam String accountId , @RequestParam  Double amount, @RequestParam  String description ) {
+       return  bankAccountService.verifySolde(accountId,amount,description);
     }
 
     @PostMapping("credit")

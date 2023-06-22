@@ -6,7 +6,7 @@ import com.banking.bankingapplication.dtos.BankAccountDto;
 import com.banking.bankingapplication.entities.*;
 import com.banking.bankingapplication.enums.AccountStatus;
 import com.banking.bankingapplication.enums.OperationType;
-import com.banking.bankingapplication.exceptions.BalanceNotFoundException;
+import com.banking.bankingapplication.exceptions.InsufisantSoldeException;
 import com.banking.bankingapplication.exceptions.BankAccountNotFoundException;
 import com.banking.bankingapplication.exceptions.UserNotFoundException;
 import com.banking.bankingapplication.mappers.BankingMapper;
@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -105,7 +107,7 @@ public class BankAccountServiceImpl implements BankAccountService {
         }
     }
     @Override
-    public void debit(String accountId, double amount, String description) throws BalanceNotFoundException, BankAccountNotFoundException {
+    public void debit(String accountId, double amount, String description) throws InsufisantSoldeException, BankAccountNotFoundException {
         BankAccountDto bankAccountDto= getBankAccount(accountId);
         BankAccount bankAccount=bankingMapper.fromBankAcountDto(bankAccountDto);
         AccountOperations  debitOperation= new AccountOperations();
@@ -126,7 +128,21 @@ public class BankAccountServiceImpl implements BankAccountService {
             bankAccountRepository.save(bankAccount);
             accountOperationRepository.save(debitOperation);
         } else if (((initialBalance-amount)<0)&&bankAccount instanceof SavingAccount)
-            throw new BalanceNotFoundException("Solde inssufisant");
+            throw new InsufisantSoldeException("Solde inssufisant");
+    }
+
+    @Override
+    public ResponseEntity<String> verifySolde(String accountId, double amount, String description) {
+        BankAccountDto bankAccountDto= getBankAccount(accountId);
+        BankAccount bankAccount=bankingMapper.fromBankAcountDto(bankAccountDto);
+        double initialBalance= bankAccount.getBalnce();
+        if(((initialBalance-amount)>=0)){
+            return new ResponseEntity<>("{\"message\": \"Sufficient balance\"}", HttpStatus.OK);
+        } else if (((initialBalance-amount)<0)&& bankAccount instanceof CurrentAccount) {
+            return new ResponseEntity<>("{\"message\": \"Insufficient balance\"}", HttpStatus.OK);
+        }
+            return new ResponseEntity<>("{\"message\": \"You have a saving account, you cant have overdraft\"}", HttpStatus.OK);
+
     }
 
     @Override
@@ -156,7 +172,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
-    public void transfer(String accountIdSource, String accoundIdDestinatin, double amount) throws BankAccountNotFoundException, BalanceNotFoundException {
+    public void transfer(String accountIdSource, String accoundIdDestinatin, double amount) throws BankAccountNotFoundException, InsufisantSoldeException {
         debit(accountIdSource,amount,"Trasnsfer to"+" "+accoundIdDestinatin);
         credit(accoundIdDestinatin,amount,"Trasnsfer from "+accountIdSource);
     }
@@ -185,6 +201,23 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     return accountHistoryDto;
     }
+
+    @Override
+    public List<BankAccountDto> getBankAccounts() {
+        List<BankAccount> bankAccounts=bankAccountRepository.findAll().stream().map(bA->{
+            if(bA instanceof CurrentAccount){
+                return (CurrentAccount) bA;
+            }
+            else {
+                return (SavingAccount)bA;
+            }
+
+        }).collect(Collectors.toList());
+
+        return bankingMapper.fromBankAccountListToBankAccountDto(bankAccounts);
+    }
+
+
 
 
 }

@@ -14,17 +14,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Objects;
 
 @RestControllerAdvice
 public class GloblaExceptionHandler implements ErrorController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     private static final String ACCOUNT_LOCKED = "Your account has been locked. Please contact administration";
     private static final String METHOD_IS_NOT_ALLOWED = "This request method is not allowed on this endpoint. Please send a '%s' request";
     private static final String INTERNAL_SERVER_ERROR_MSG = "An error occurred while processing the request";
-    private static final String INCORRECT_CREDENTIALS = "Username / password incorrect. Please try again";
     private static final String ACCOUNT_DISABLED = "Your account has been disabled. If this is an error, please contact administration";
     private static final String ERROR_PROCESSING_FILE = "Error occurred while processing file";
     private static final String NOT_ENOUGH_PERMISSION = "You do not have enough permission";
@@ -36,7 +34,7 @@ public class GloblaExceptionHandler implements ErrorController {
     }
 
     @ExceptionHandler(UsernameExistException.class)
-    public ResponseEntity<HttpResponse> UsernameExistException() {
+    public ResponseEntity<HttpResponse> usernameExistException() {
         return createHttpResponse(HttpStatus.BAD_REQUEST, "User name already exists");
     }
 
@@ -54,7 +52,7 @@ public class GloblaExceptionHandler implements ErrorController {
     public ResponseEntity<HttpResponse> lockedException() {
         return createHttpResponse(HttpStatus.UNAUTHORIZED, ACCOUNT_LOCKED);
     }
-    @ExceptionHandler(restTokenExpiredException.class)
+    @ExceptionHandler(RestTokenExpiredException.class)
     public ResponseEntity<HttpResponse> restTokenExpiredException( Exception restTokenExpiredException) {
         return createHttpResponse(HttpStatus.UNAUTHORIZED, restTokenExpiredException.getMessage());
     }
@@ -96,7 +94,7 @@ public class GloblaExceptionHandler implements ErrorController {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
-        LOGGER.error(exception.getMessage());
+        logger.error(exception.getMessage());
         return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
     }
 
@@ -104,19 +102,19 @@ public class GloblaExceptionHandler implements ErrorController {
 
     @ExceptionHandler(NoResultException.class)
     public ResponseEntity<HttpResponse> notFoundException(NoResultException exception) {
-        LOGGER.error(exception.getMessage());
+        logger.error(exception.getMessage());
         return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 
     @ExceptionHandler(IOException.class)
     public ResponseEntity<HttpResponse> iOException(IOException exception) {
-        LOGGER.error(exception.getMessage());
+        logger.error(exception.getMessage());
         return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
     }
 
     @ExceptionHandler(NotAnImageFileException.class)
-    public ResponseEntity<HttpResponse> NotAnImageFileException(NotAnImageFileException exception) {
-        LOGGER.error(exception.getMessage());
+    public ResponseEntity<HttpResponse> notAnImageFileException(NotAnImageFileException exception) {
+        logger.error(exception.getMessage());
         return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
     }
 
