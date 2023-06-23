@@ -178,13 +178,13 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
     @Override
     public List<AccountOperationDto> accoutntHistory(String accountId) {
-        return bankingMapper.fromAccountOperationListToAccountOperationDtoList(accountOperationRepository.findAccountOperationsByBankAccountId(accountId));
+        return bankingMapper.fromAccountOperationListToAccountOperationDtoList(accountOperationRepository.findAccountOperationsByBankAccountIdOrderByOperationDateDesc(accountId));
     }
     @Override
     public AccountHistoryDto getAccountHistory(String accountId, int page , int size) throws BankAccountNotFoundException {
         BankAccount bankAccount = bankAccountRepository.findById(accountId).orElseThrow(()->new BankAccountNotFoundException("now bank account found with this id"));
-        Page<AccountOperations> accountOperations=accountOperationRepository.findAccountOperationsByBankAccountId(accountId, PageRequest.of(page,size));
-        List<AccountOperationDto> operationDtos= accountOperationRepository.findAccountOperationsByBankAccountId(accountId, PageRequest.of(page,size)).getContent().stream()
+        Page<AccountOperations> accountOperations=accountOperationRepository.findAccountOperationsByBankAccountIdOrderByOperationDateDesc(accountId, PageRequest.of(page,size));
+        List<AccountOperationDto> operationDtos= accountOperationRepository.findAccountOperationsByBankAccountIdOrderByOperationDateDesc(accountId, PageRequest.of(page,size)).getContent().stream()
                 .map(operations -> {
                     AccountOperationDto accountOperationDto=new AccountOperationDto();
                     BeanUtils.copyProperties(operations,accountOperationDto);

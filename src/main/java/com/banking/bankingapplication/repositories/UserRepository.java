@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<Users,Long> {
             "OR LOWER(c.job) LIKE CONCAT('%', LOWER(:query), '%') " +
             "OR CAST(c.creationDate AS string) LIKE CONCAT('%', LOWER(:query), '%')")
     Page<Users> findByQuery(@Param("query") String query, Pageable p);
-
+    Page<Users> findAllByOrderByCreationDateDesc(Pageable p);
 
     Users findByEmail(String email);
     Users findByUserName(String email);

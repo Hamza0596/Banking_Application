@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService , UserDetailsService {
 
     @Override
     public Page<UserDto> getUsers(int pageNumber, int size) {
-        return bankingMapper.fromCustomerListToCustomerPageDto(userRepository.findAll(PageRequest.of(pageNumber,size)));
+        return bankingMapper.fromCustomerListToCustomerPageDto(userRepository.findAllByOrderByCreationDateDesc(PageRequest.of(pageNumber,size)));
     }
 
     @Override
@@ -187,7 +187,6 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     }
     @Override
     public UserDto addNewUser(String firstName, String lastName, String userName, String email, String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException {
-       logger.info("Bonjour");
         validateNewUsernameAndEmail(EMPTY,userName,email);
         UserDto userDto=new UserDto();
         String password = generatePassword();
