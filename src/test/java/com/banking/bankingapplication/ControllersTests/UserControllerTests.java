@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ import static org.mockito.Mockito.when;
 @WebMvcTest(UserController.class)
  class UserControllerTests {
     @Autowired
+    private WebApplicationContext webApplicationContext;
+    @Autowired
     MockMvc mockMvc;
 
     @MockBean
@@ -29,19 +32,25 @@ import static org.mockito.Mockito.when;
 
     @MockBean
     BankingMapper bankingMapper;
+
+
     @Test
      void testGetAllCustomers() throws Exception {
+        int pageNumber=0;
+        int size=5;
         List<UserDto> userDtoList = new ArrayList<>();
         UserDto userDto1 = new UserDto();
         UserDto userDto2 = new UserDto();
         userDtoList.add(userDto1);
         userDtoList.add(userDto2);
-        when(userService.getUsers(0,5).getContent()).thenReturn(userDtoList);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/customer/customers"))
+        when(userService.getUsers(pageNumber,size).getContent()).thenReturn(userDtoList);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/user/users/{pageNumber}/{size}"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(userDtoList.size()));
     }
+
+
 
     @Test
     void geCustomerById() throws Exception {

@@ -1,5 +1,7 @@
 package com.banking.bankingapplication;
 
+import com.banking.bankingapplication.filter.JwtAccessDeniedHandler;
+import com.banking.bankingapplication.utility.JWTTokenProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -47,5 +49,12 @@ public class BankingApplication {
         urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(urlBasedCorsConfigurationSource);
     }
+
+    @Bean
+    public JWTTokenProvider jwtTokenProvider() {
+        return new JWTTokenProvider();
+    }
+
+
 
 }

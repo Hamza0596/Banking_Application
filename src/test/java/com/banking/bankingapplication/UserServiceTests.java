@@ -28,14 +28,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
     @Test
     @Sql(scripts="/Customer_data.sql",executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-     void Customer() {
+    @Sql(scripts="/Delete_Customer_data.sql",executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+
+    void Customer() {
         assertEquals("Hamzaaa", userService.user(1L).getFirstName());
     }
 
     @Test
      void createCustomer() throws EmailExistException, UsernameExistException {
         UserDto userDto = new UserDto();
-        userDto.setId(1L);
         userDto.setFirstName("Mohamed");
         userDto.setEmail("john.doe@example.com");
 

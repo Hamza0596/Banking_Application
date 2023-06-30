@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import static com.auth0.jwt.algorithms.Algorithm.HMAC512;
 import static com.banking.bankingapplication.constant.SecurityConstant.*;
 import static java.util.Arrays.stream;
 
-@Component
+@Service
 public class JWTTokenProvider {
 
     @Value("${jwt.secret}")

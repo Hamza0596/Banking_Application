@@ -1,1 +1,1 @@
-delete from Customer ;
+delete from users ;

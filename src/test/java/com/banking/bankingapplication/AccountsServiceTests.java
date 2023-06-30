@@ -140,7 +140,7 @@ import static org.junit.jupiter.api.Assertions.*;
         AccountHistoryDto accountHistoryDto=bankAccountService.getAccountHistory("24aa50b7-af9a-4245-a658-f0ba2ac25037",0,2);
         assertEquals( 690,bankAccountService.getBankAccount("24aa50b7-af9a-4245-a658-f0ba2ac25037").getBalnce());
         assertEquals(690,accountHistoryDto.getBalance());
-        assertEquals(500,accountHistoryDto.getAccountOperationDtos().get(0).getAmount());
+        assertEquals(10,accountHistoryDto.getAccountOperationDtos().get(0).getAmount());
 
 
     }

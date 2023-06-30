@@ -1,6 +1,7 @@
 package com.banking.bankingapplication.filter;
 
 import com.banking.bankingapplication.utility.JWTTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,8 +22,10 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
+    @Autowired
     private JWTTokenProvider jwtTokenProvider;
 
+    @Autowired
     public JwtAuthorizationFilter(JWTTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
