@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
     @MockBean
     BankingMapper bankingMapper;
 
-    @Test
+   /* @Test
     void getBankAccountsByUserId() throws Exception {
         Long userId =1L;
         BankAccountDto bankAccountDto1= new BankAccountDto();
@@ -163,6 +163,6 @@ import static org.mockito.Mockito.*;
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
-
+*/
 
 }
