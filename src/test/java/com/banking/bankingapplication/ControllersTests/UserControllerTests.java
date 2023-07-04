@@ -105,9 +105,11 @@ import static org.mockito.Mockito.when;
         return "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJhdWQiOiJVc2VyIE1hbmFnZW1lbnQgUG9ydGFsIiwic3ViIjoiSGFtemF3aSIsImlzcyI6IkdldCBBcnJheXMsIExMQyIsIkF1dGhvcml0aWVzIjpbInVzZXI6cmVhZCJdLCJleHAiOjE2ODg4MzAyNTgsImlhdCI6MTY4ODM5ODI1OH0.U_ja7Gfp2Brbwl-dl4QR4A2_gTvXZMch1jIW8m3mW74pTbUc2IAfIe5lgynsz--35VOrHjPZCF5c7nniWmhutA";
     }
 
+
     @Test
      void testCreateCustomer() throws Exception {
         UserDto userDto = new UserDto();
+        hello
         when(userService.register(any(UserDto.class))).thenReturn(userDto);
         mockMvc.perform(MockMvcRequestBuilders.post("/api/customer/customers")
                         .contentType(MediaType.APPLICATION_JSON)
