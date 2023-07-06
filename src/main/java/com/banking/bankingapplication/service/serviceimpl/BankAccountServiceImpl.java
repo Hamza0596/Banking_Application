@@ -40,10 +40,8 @@ public class BankAccountServiceImpl implements BankAccountService {
     private BankingMapper bankingMapper;
     @Override
     public BankAccountDto createBankAccount(Long customerId, double balance, String type) throws UserNotFoundException {
-        log.info("hello"+customerId);
 
         Users user = customerRepository.findById(customerId).orElseThrow(()->new UserNotFoundException("user not found"));
-        log.info("okok");
         BankAccount bankAccount;
         if(type.equals("CURR")){
             CurrentAccount currentAccount = new CurrentAccount();
@@ -140,10 +138,7 @@ public class BankAccountServiceImpl implements BankAccountService {
             return new ResponseEntity<>("{\"message\": \"Sufficient balance\"}", HttpStatus.OK);
         } else if (((initialBalance-amount)<0)&& bankAccount instanceof CurrentAccount) {
             return new ResponseEntity<>("{\"message\": \"Insufficient balance\"}", HttpStatus.OK);
-        }
-            return new ResponseEntity<>("{\"message\": \"You have a saving account, you cant have overdraft\"}", HttpStatus.OK);
-
-    }
+        }return new ResponseEntity<>("{\"message\": \"You have a saving account, you cant have overdraft\"}", HttpStatus.OK);}
 
     @Override
     public void credit(String accountId, double amount, String description) throws BankAccountNotFoundException {
@@ -207,11 +202,9 @@ public class BankAccountServiceImpl implements BankAccountService {
         List<BankAccount> bankAccounts=bankAccountRepository.findAll().stream().map(bA->{
             if(bA instanceof CurrentAccount){
                 return (CurrentAccount) bA;
-            }
-            else {
+            }else {
                 return (SavingAccount)bA;
             }
-
         }).collect(Collectors.toList());
 
         return bankingMapper.fromBankAccountListToBankAccountDto(bankAccounts);

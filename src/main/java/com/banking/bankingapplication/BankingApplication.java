@@ -1,6 +1,5 @@
 package com.banking.bankingapplication;
 
-import com.banking.bankingapplication.filter.JwtAccessDeniedHandler;
 import com.banking.bankingapplication.utility.JWTTokenProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,12 +17,11 @@ import java.util.Collections;
 @CrossOrigin(origins = "*")
 
 public class BankingApplication {
-     final String accesOrigin="Access-Control-Allow-Origin";
+     final static String accesOrigin="Access-Control-Allow-Origin";
 
     public static void main(String[] args) {
         SpringApplication.run(BankingApplication.class, args);
 
-        System.out.println("hello hamzaaaaaaaaaaaaaaaaaaaaaaaaaaaawi");
 
     }
 

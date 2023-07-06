@@ -1,8 +1,10 @@
 package com.banking.bankingapplication;
 
 import com.banking.bankingapplication.dtos.AccountHistoryDto;
+import com.banking.bankingapplication.dtos.BankAccountDto;
 import com.banking.bankingapplication.dtos.CurrentAcountDto;
 import com.banking.bankingapplication.entities.AccountOperations;
+import com.banking.bankingapplication.entities.BankAccount;
 import com.banking.bankingapplication.enums.OperationType;
 import com.banking.bankingapplication.exceptions.InsufisantSoldeException;
 import com.banking.bankingapplication.repositories.AccountOperationRepository;
@@ -10,6 +12,8 @@ import com.banking.bankingapplication.service.BankAccountService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -149,14 +153,37 @@ import static org.junit.jupiter.api.Assertions.*;
     @Test
      void addCurrentAccount(){
         bankAccountService.createBankAccount(1L,80,"CURR");
-        assertEquals(80,bankAccountService.createBankAccount(1L,80,"CURR").getBalnce());    }
+        List<BankAccountDto> accounts =bankAccountService.getBankAccounts();
+        assertEquals(7,accounts.size());
+
+    }
 
     @Test
      void addSaveAccount(){
-        bankAccountService.createBankAccount(1L,80,"SAVE");
-        assertEquals(80,bankAccountService.createBankAccount(1L,80,"CURR").getBalnce());    }
+        BankAccountDto newAccount=bankAccountService.createBankAccount(1L,80,"SAVE");
+        List<BankAccountDto> accounts =bankAccountService.getBankAccounts();
+        assertEquals(7,accounts.size());
+        assertEquals(80,newAccount.getBalnce());    }
+
+@Test
+    void verifySoldWhenSufficientBalance(){
+
+    assertEquals(new ResponseEntity<>("{\"message\": \"Sufficient balance\"}", HttpStatus.OK),bankAccountService.verifySolde("24aa50b7-af9a-4245-a658-f0ba2ac25038", 100, "test")) ;
+}
+
+    @Test
+    void verifySoldWhenInsufficientBalanceAndCurrentAccount(){
+
+        assertEquals(new ResponseEntity<>("{\"message\": \"Insufficient balance\"}", HttpStatus.OK),bankAccountService.verifySolde("24aa50b7-af9a-4245-a658-f0ba2ac25037", 500, "test")) ;
+    }
 
 
+
+    @Test
+    void verifySoldWhenInsufficientBalanceAndSavingAccount(){
+
+        assertEquals(new ResponseEntity<>("{\"message\": \"You have a saving account, you cant have overdraft\"}", HttpStatus.OK),bankAccountService.verifySolde("24aa50b7-af9a-4245-a658-f0ba2ac25038", 4000, "test")) ;
+    }
 
 
 }

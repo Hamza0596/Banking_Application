@@ -48,7 +48,6 @@ import java.util.UUID;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService , UserDetailsService {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
     @Autowired
@@ -94,31 +93,7 @@ public class UserServiceImpl implements UserService , UserDetailsService {
        return RandomStringUtils.randomAlphabetic(10);
      }
 
-    private UserDto validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
-        UserDto userByNewUsername = findUserByUserName (newUsername);
-        UserDto userByNewEmail = findUserByEmail(newEmail);
-        if(StringUtils.isNotBlank(currentUsername)) {
-            UserDto currentUser = findUserByUserName(currentUsername);
-            if(currentUser == null) {
-                throw new UserNotFoundException("NO_USER_FOUND_BY_USERNAME" + currentUsername);
-            }
-            if(userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
-                throw new UsernameExistException("USERNAME_ALREADY_EXISTS");
-            }
-            if(userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
-                throw new EmailExistException("EMAIL_ALREADY_EXISTS");
-            }
-            return currentUser;
-        } else {
-            if(userByNewUsername != null) {
-                throw new UsernameExistException("USERNAME_ALREADY_EXISTS");
-            }
-            if(userByNewEmail != null) {
-                throw new EmailExistException("EMAIL_ALREADY_EXISTS");
-            }
-            return null;
-        }
-    }
+
 
 
     @Override
@@ -228,6 +203,28 @@ public class UserServiceImpl implements UserService , UserDetailsService {
             // Handle IOException here
             // For example, log the error or throw a custom exception
             throw new IOException("Error occurred while updating profile image: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public UserDto validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException {
+        UserDto userByNewUsername = findUserByUserName (newUsername);
+        UserDto userByNewEmail = findUserByEmail(newEmail);
+        if(StringUtils.isNotBlank(currentUsername)) {
+            UserDto currentUser = findUserByUserName(currentUsername);
+            if(currentUser == null) {
+                throw new UserNotFoundException("NO_USER_FOUND_BY_USERNAME" + currentUsername);
+            }
+            if(userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
+                throw new UsernameExistException("USERNAME_ALREADY_EXISTS");
+            }
+            if(userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
+                throw new EmailExistException("EMAIL_ALREADY_EXISTS");}return currentUser;} else {
+            if(userByNewUsername != null) {
+                throw new UsernameExistException("USERNAME_ALREADY_EXISTS");}
+            if(userByNewEmail != null) {
+                throw new EmailExistException("EMAIL_ALREADY_EXISTS");}
+            return null;
         }
     }
 

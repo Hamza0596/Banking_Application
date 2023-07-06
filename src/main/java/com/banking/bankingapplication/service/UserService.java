@@ -26,6 +26,7 @@ public interface UserService {
    void sendEmailResetPassword(String email) throws EmailNotFoundException;
    void resetPassword(String email, String token) throws EmailNotFoundException, RestTokenExpiredException;
     public UserDto updateProfileImage(String username, MultipartFile profileImage) throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException;
+    UserDto validateNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail) throws UserNotFoundException, UsernameExistException, EmailExistException ;
 
 
     }
