@@ -14,8 +14,6 @@ import com.banking.bankingapplication.service.PasswordResetTokenService;
 import com.banking.bankingapplication.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,18 +52,14 @@ public class UserServiceImpl implements UserService , UserDetailsService {
     UserRepository userRepository;
     @Autowired
     BankingMapper bankingMapper;
-
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
-
     @Autowired
     LoginAttemptService loginAttemptService;
     @Autowired
     MailingService mailingService;
-
     @Autowired
     PasswordResetTokenService passwordResetTokenService;
-
 
     @Override
     public UserDto register(UserDto userDto) throws EmailExistException, UsernameExistException {
@@ -124,9 +118,17 @@ public class UserServiceImpl implements UserService , UserDetailsService {
 
 
     @Override
-    public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+    public boolean deleteUser(Long userId) {
+        try {
+            userRepository.deleteById(userId);
+            return true; // Suppression réussie
+        } catch (Exception e) {
+            // Gérer toute exception éventuelle lors de la suppression
+            e.printStackTrace();
+            return false; // Échec de la suppression
+        }
     }
+
 
 
 

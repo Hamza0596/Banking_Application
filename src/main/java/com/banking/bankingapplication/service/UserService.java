@@ -19,7 +19,7 @@ public interface UserService {
 
     Page<UserDto> filter(String query, int pageNumber, int size);
 
-    public void deleteUser(Long userId);
+    public boolean deleteUser(Long userId);
     UserDto addNewUser(String firstName, String lastName, String userName, String email,String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws UserNotFoundException, UsernameExistException, EmailExistException, IOException, NotAnImageFileException;
     UserDto updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername, String newEmail,String job, String role, boolean isNonLocked, boolean isActive, MultipartFile profileImage) throws EmailExistException, UsernameExistException, IOException, NotAnImageFileException;
     void chagePassword(ResetPasswordDto resetPasswordDto ) throws EmailNotFoundException, PasswordDoNotMatcheException;
