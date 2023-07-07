@@ -340,6 +340,7 @@ public class UserServiceImpl implements UserService , UserDetailsService {
         user.setPassword(encodedNewPassword);
         userRepository.save(user);
         mailingService.sendEmail(user.getEmail(), password, password);
+        /*sssssssss*/
 
     }
 
