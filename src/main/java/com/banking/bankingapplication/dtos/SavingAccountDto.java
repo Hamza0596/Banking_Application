@@ -1,6 +1,6 @@
 package com.banking.bankingapplication.dtos;
 
-import com.banking.bankingapplication.entities.Customer;
+import com.banking.bankingapplication.entities.Users;
 import com.banking.bankingapplication.enums.AccountStatus;
 import lombok.Data;
 
@@ -12,6 +12,6 @@ public class SavingAccountDto extends BankAccountDto {
     private double balnce;
     private Date createdAt;
     private AccountStatus status;
-    private Customer customer;
+    private Users user;
     private double intersetRating;
 }

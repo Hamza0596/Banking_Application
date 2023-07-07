@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -18,15 +19,16 @@ import java.util.List;
 @Entity
 @Inheritance(strategy =InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "TYPE" )
-public class BankAccount {
+public class BankAccount implements Serializable {
     @Id
     private String id;
     private double balnce;
     private Date createdAt;
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
-    @ManyToOne
-    private Customer customer;
-    @OneToMany(mappedBy = "bankAccount")
+    @ManyToOne     @JoinColumn(name = "user_id") // Specify the foreign key column
+
+    private Users user;
+    @OneToMany(mappedBy = "bankAccount" , cascade= CascadeType.ALL)
     private List<AccountOperations> operations;
 }

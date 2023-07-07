@@ -3,6 +3,7 @@ package com.banking.bankingapplication.mappers;
 import com.banking.bankingapplication.dtos.*;
 import com.banking.bankingapplication.entities.*;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,39 +12,71 @@ import java.util.stream.Collectors;
 @Service
 public class BankingMapper {
 
-    public CustomerDto fromCustomer(Customer customer){
-        CustomerDto customerDto=new CustomerDto();
-        BeanUtils.copyProperties(customer,customerDto);
-        return customerDto;
+    public static UserDto fromCustomer(Users user){
+        if(user !=null){
+            UserDto userDto =new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            return userDto;
+        }else{
+            return null;
+
+        }
     }
 
-    public Customer fromCustomerDto(CustomerDto customerDto){
-        Customer customer = new Customer();
-        customer.setName(customerDto.getName());
-        customer.setId(customerDto.getId());
-        customer.setEmail(customerDto.getEmail());
-        return customer;
+    public  static Users fromCustomerDto(UserDto userDto){
+        Users user = new Users();
+        BeanUtils.copyProperties(userDto, user);
+
+        return user;
     }
 
-    public List<CustomerDto>  fromCustomerListToCustomerListDto(List<Customer> customers){
-        return customers.stream().map(customer -> {
-            CustomerDto customerDto= new CustomerDto();
-            customerDto.setEmail(customer.getEmail());
-            customerDto.setName(customer.getName());
-            customerDto.setId(customer.getId());
-            return customerDto;
+    public List<UserDto>  fromCustomerListToCustomerListDto(List<Users> users){
+        return users.stream().map(customer -> {
+            UserDto userDto = new UserDto();
+            userDto.setEmail(customer.getEmail());
+            userDto.setFirstName(customer.getFirstName());
+            userDto.setId(customer.getId());
+            userDto.setLastName(customer.getLastName());
+            userDto.setJob(customer.getJob());
+            userDto.setCreationDate(customer.getCreationDate());
+            userDto.setPassword(customer.getPassword());
+            userDto.setRoles(customer.getRoles());
+            userDto.setUserName(customer.getUserName());
+
+            return userDto;
         }).collect(Collectors.toList());
 
     }
 
+    public  Page<UserDto> fromCustomerListToCustomerPageDto(Page<Users> customers){
+        return  customers.map(customer -> {
+            UserDto userDto = new UserDto();
+            userDto.setEmail(customer.getEmail());
+            userDto.setFirstName(customer.getFirstName());
+            userDto.setId(customer.getId());
+            userDto.setLastName(customer.getLastName());
+            userDto.setJob(customer.getJob());
+            userDto.setCreationDate(customer.getCreationDate());
+            userDto.setPassword(customer.getPassword());
+            userDto.setRoles(customer.getRoles());
+            userDto.setUserName(customer.getUserName());
+            return userDto;
+        });
 
-    public List<Customer>  fromCustomerDtoListToCustomerList(List<CustomerDto> customersDto){
+    }
+
+
+    public List<Users>  fromCustomerDtoListToCustomerList(List<UserDto> customersDto){
          return customersDto.stream().map(customerDto -> {
-            Customer customer= new Customer();
-            customer.setEmail(customerDto.getEmail());
-            customer.setName(customerDto.getName());
-            customer.setId(customerDto.getId());
-            return customer;
+            Users user = new Users();
+            user.setEmail(customerDto.getEmail());
+            user.setFirstName(customerDto.getFirstName());
+            user.setId(customerDto.getId());
+             user.setLastName(customerDto.getLastName());
+             user.setJob(customerDto.getJob());
+             user.setCreationDate(customerDto.getCreationDate());
+             user.setPassword(customerDto.getPassword());
+            return user;
         }).collect(Collectors.toList());
     }
 
