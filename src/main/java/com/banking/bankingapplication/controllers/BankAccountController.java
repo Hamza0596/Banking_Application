@@ -3,6 +3,7 @@ package com.banking.bankingapplication.controllers;
 import com.banking.bankingapplication.dtos.AccountHistoryDto;
 import com.banking.bankingapplication.dtos.AccountOperationDto;
 import com.banking.bankingapplication.dtos.BankAccountDto;
+import com.banking.bankingapplication.entities.Post;
 import com.banking.bankingapplication.mappers.BankingMapper;
 import com.banking.bankingapplication.service.BankAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,5 +81,10 @@ public class BankAccountController {
         return bankAccountService.deleteBankAccount(id);
     }
 
+
+    @GetMapping("/posts")
+    public List<Post>  getposts(){
+        return bankAccountService.getPosts();
+    }
 
 }

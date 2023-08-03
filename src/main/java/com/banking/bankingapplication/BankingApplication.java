@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -21,6 +22,7 @@ public class BankingApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BankingApplication.class, args);
+
 
 
     }
@@ -51,6 +53,13 @@ public class BankingApplication {
     @Bean
     public JWTTokenProvider jwtTokenProvider() {
         return new JWTTokenProvider();
+    }
+
+
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
 

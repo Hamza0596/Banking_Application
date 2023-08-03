@@ -82,6 +82,8 @@ import jakarta.mail.Message;
         assertThrows(UserNotFoundException.class, () -> {
             userServiceImpl.validateNewUsernameAndEmail("Hamza","Hamzawi","hamzabouachir@yahoo.com");
         },"NO_USER_FOUND_BY_USERNAMEHamza");
+
+
     }
 
     @Test

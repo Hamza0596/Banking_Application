@@ -17,13 +17,19 @@ import com.banking.bankingapplication.service.BankAccountService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -139,6 +145,16 @@ public class BankAccountServiceImpl implements BankAccountService {
         } else if (((initialBalance-amount)<0)&& bankAccount instanceof CurrentAccount) {
             return new ResponseEntity<>("{\"message\": \"Insufficient balance\"}", HttpStatus.OK);
         }return new ResponseEntity<>("{\"message\": \"You have a saving account, you cant have overdraft\"}", HttpStatus.OK);}
+
+    @Autowired
+    RestTemplate restTemplate;
+    @Override
+    public List<Post> getPosts() {
+        return  Arrays.asList( restTemplate.getForObject("https://jsonplaceholder.typicode.com/posts",Post[].class)).stream().map(x->{
+            x.setTitle("ok");
+            return x;
+        }).collect(Collectors.toList());
+    }
 
     @Override
     public void credit(String accountId, double amount, String description) throws BankAccountNotFoundException {

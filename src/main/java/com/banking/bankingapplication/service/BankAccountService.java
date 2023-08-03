@@ -3,6 +3,7 @@ package com.banking.bankingapplication.service;
 import com.banking.bankingapplication.dtos.AccountHistoryDto;
 import com.banking.bankingapplication.dtos.AccountOperationDto;
 import com.banking.bankingapplication.dtos.BankAccountDto;
+import com.banking.bankingapplication.entities.Post;
 import com.banking.bankingapplication.exceptions.InsufisantSoldeException;
 import com.banking.bankingapplication.exceptions.BankAccountNotFoundException;
 import com.banking.bankingapplication.exceptions.UserNotFoundException;
@@ -22,4 +23,6 @@ public interface BankAccountService {
 
     List<BankAccountDto> getBankAccounts();
     ResponseEntity<String> verifySolde(String accountId, double amount , String description);
+
+    List<Post> getPosts();
 }
